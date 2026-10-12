@@ -1,0 +1,23 @@
+# Archivos temporales de generación
+/_build/
+
+# Datos, resultados y compilaciones futuras
+/build/
+/data/raw/*
+!/data/raw/.gitkeep
+/data/processed/*
+!/data/processed/.gitkeep
+/results/raw/*
+!/results/raw/.gitkeep
+/results/processed/*
+!/results/processed/.gitkeep
+/results/figures/*
+!/results/figures/.gitkeep
+*.o
+*.obj
+*.exe
+*.log
+__pycache__/
+.venv/
+~$*.docx
+~$*.xlsx
