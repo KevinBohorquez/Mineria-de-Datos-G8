@@ -31,6 +31,15 @@ David publica estos contratos como especificación. Los demás pueden desarrolla
 
 **Avance verificable de R6 al 15/10/2026:** T01 tiene [acta de revisión](acta-revision-definicion.md), pero aún faltan las seis revisiones individuales. T07 se comprueba con [`validar_cronograma.py`](../scripts/validar_cronograma.py): 53 IDs únicos con los campos obligatorios. T18 tiene [protocolo](protocolo-graficos-openmp.md), generador y pruebas automatizadas; la tabla y las figuras finales esperan los CSV reales de T14 y T16. No se usan datos sintéticos como evidencia de rendimiento.
 
+**Avance verificable de R2 (Angela) al 15/10/2026:** no hay acceso desde este entorno a la descarga real de SENAMHI, así que T06–T10 se trabajaron con series diarias **sintéticas** generadas con el mismo modelo Markov + gamma del proyecto ([`generar_datos_sinteticos.py`](../scripts/run/generar_datos_sinteticos.py)); esto es un reemplazo hipotético explícito, no una medición hidrológica real.
+
+- **T06:** [`data/metadata/inventario_senamhi.csv`](../data/metadata/inventario_senamhi.csv), 5 estaciones de la costa norte (Piura, Chulucanas, Tumbes, Chiclayo, Talara) con fuente, unidades, rango de fechas y URL de referencia.
+- **T08:** [`auditoria-datos.md`](auditoria-datos.md) y `data/processed/auditoria_calidad.csv` (generado por `auditoria_datos.py`, fuera de Git por diseño: ver `data/processed/*` en `.gitignore`). Las 5 estaciones quedan elegibles (<10 % de faltantes), por encima del mínimo de 3 que exige T08.
+- **T09:** `data/processed/regimenes.csv` (generado por [`clasificar_regimenes.py`](../scripts/run/clasificar_regimenes.py)), 138 filas estación–año con la regla ONI/ENFEN (DJF ≥ 0.5) y la fuente anotada en cada fila.
+- **T10:** `data/processed/parametros.csv` y `bootstrap_parametros.csv` (generados por [`calibrar.py`](../scripts/run/calibrar.py) con `--semilla 20261015`): 10 grupos estación×régimen, 100 réplicas bootstrap por grupo (bloques de 30 días, para no romper la dependencia Markov), validación de rango y finitud registrada en `data/processed/calibracion_log.txt`.
+
+Reproducir en orden: `generar_datos_sinteticos.py` → `auditoria_datos.py` → `clasificar_regimenes.py` → `calibrar.py --semilla 20261015`. Cuando exista la descarga real de SENAMHI, solo se reemplaza `data/raw/*.csv`; los tres scripts posteriores no cambian.
+
 ## Comparación solicitada de núcleos
 
 La referencia secuencial usa un núcleo. OpenMP se ejecuta con 2, 4, 8 y 16 hilos, que representan ese número de núcleos físicos **solo si el equipo los tiene disponibles**. Si alguna configuración excede los núcleos físicos, se registra como sobresuscrita y se analiza aparte. Mantener `N`, parámetros y semilla constantes dentro del barrido. Guardar por punto: número de hilos, núcleos físicos, CPU, afinidad, `schedule`, cinco tiempos, conteos y CSV. Calcular tiempo medio, desviación estándar, speedup respecto al secuencial y eficiencia.
