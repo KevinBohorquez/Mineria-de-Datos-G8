@@ -53,6 +53,18 @@ add_executable(smoke tests/smoke/smoke.cpp)
 target_link_libraries(smoke PRIVATE pp_io pp_stats pp_core)
 add_test(NAME smoke COMMAND smoke)
 
+# V6 (estadística del generador) y V7 (caso analítico D=1): pytest sobre pp_serial y un auxiliar (T13)
+add_executable(pp_v6_generador tests/unit/v6_generador.cpp)
+target_link_libraries(pp_v6_generador PRIVATE pp_io pp_stats pp_core)
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_FOUND)
+  add_test(NAME v6_v7_estadistica_analitica
+           COMMAND ${Python3_EXECUTABLE} -m pytest -q ${PROJECT_SOURCE_DIR}/tests/unit/test_estadistico.py
+                   ${PROJECT_SOURCE_DIR}/tests/unit/test_analitico.py)
+  set_tests_properties(v6_v7_estadistica_analitica PROPERTIES ENVIRONMENT
+                       "PP_BIN_DIR=${CMAKE_BINARY_DIR}/src/backends;PP_V6_GENERADOR=${CMAKE_BINARY_DIR}/pp_v6_generador")
+endif()
+
 # V1 (equivalencia serial vs OpenMP): pytest sobre los ejecutables compilados (T17)
 if(PP_BUILD_OPENMP)
   find_package(Python3 COMPONENTS Interpreter QUIET)
