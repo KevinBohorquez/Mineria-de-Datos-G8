@@ -1,0 +1,31 @@
+# T04 | Integración continua: compila el núcleo, ejecuta CTest (smoke + V1) y V5 con Archer.
+name: ci
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  construir-y-probar:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar dependencias
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ python3-pytest clang libomp-dev
+      - name: Compilar
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build --parallel
+      - name: Pruebas (smoke y V1)
+        run: ctest --test-dir build --output-on-failure
+      - name: V5 sin carreras (ThreadSanitizer + Archer)
+        run: python3 -m pytest -v tests/concurrency
+      - name: Subir log de V5
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v5-archer-log
+          path: build/v5_archer.log
+          if-no-files-found: ignore
