@@ -22,12 +22,14 @@ David publica estos contratos como especificación. Los demás pueden desarrolla
 
 | Responsable | Tareas del cronograma | Resultado propio y verificable |
 | --- | --- | --- |
-| **David (R1)** | T02, T03 | Especificación de CLI, configuración y CSV; repositorio Git en `main`, reglas de PR y plantilla de revisión. |
+| **David (R1)** | T02, T03 | Especificación de CLI, configuración y CSV; repositorio Git en `master`, reglas de PR y plantilla de revisión. |
 | **Angela (R2)** | T06, T08, T09, T10 | Inventario SENAMHI; reporte de calidad con faltantes y exclusiones; tabla ENFEN; parámetros Markov + gamma y 100 remuestreos bootstrap por estación y régimen. |
 | **Ashley (R3)** | T04, T11, T12, T15 | CMake y CI; núcleo secuencial con Philox y balance hídrico; estimadores y salida CSV; backend OpenMP con reducciones. Puede usar parámetros sintéticos hasta recibir los calibrados. |
 | **Lita (R4)** | T13, T16, T17 | Casos deterministas V6/V7 y comparación V1/V5; matriz OpenMP de **2, 4, 8 y 16 hilos** con carga fija, semilla fija, afinidad y `schedule` registrados. Los casos pequeños se preparan sin esperar datos reales. |
 | **Miguel (R5)** | T05, T14 | Docker base con `hello` MPI + OpenMP en dos contenedores; herramienta de medición T1 que guarda cinco tiempos, calentamiento y descripción del hardware. |
 | **Rhamses (R6)** | T01, T07, T18 | Definición única y registro de decisiones; tablero de tareas; tabla y gráficos de tiempo, speedup y eficiencia OpenMP para 2/4/8/16 hilos a partir de CSV, con formato y fuentes documentados. Puede preparar el generador de gráficos con CSV de ejemplo. |
+
+**Avance verificable de R6 al 15/10/2026:** T01 tiene [acta de revisión](acta-revision-definicion.md), pero aún faltan las seis revisiones individuales. T07 se comprueba con [`validar_cronograma.py`](../scripts/validar_cronograma.py): 53 IDs únicos con los campos obligatorios. T18 tiene [protocolo](protocolo-graficos-openmp.md), generador y pruebas automatizadas; la tabla y las figuras finales esperan los CSV reales de T14 y T16. No se usan datos sintéticos como evidencia de rendimiento.
 
 ## Comparación solicitada de núcleos
 
