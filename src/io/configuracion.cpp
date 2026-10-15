@@ -57,6 +57,8 @@ bool asignar(Configuracion& c, const std::string& k, const std::string& v) {
     else if (k == "hilos") c.hilos = static_cast<int>(a_uint64(k, v));
     else if (k == "schedule") c.schedule = v;
     else if (k == "salida") c.salida = v;
+    else if (k == "lote") c.lote = a_uint64(k, v);
+    else if (k == "repeticion") c.repeticion = static_cast<int>(a_uint64(k, v));
     else if (k == "p01") c.params.p01 = a_double(k, v);
     else if (k == "p11") c.params.p11 = a_double(k, v);
     else if (k == "alfa") c.params.alfa = a_double(k, v);
@@ -79,6 +81,10 @@ void ayuda() {
         "  --hilos T           hilos OpenMP (solo pp_openmp)\n"
         "  --schedule S        static|dynamic|guided[:chunk]; vacío usa OMP_SCHEDULE\n"
         "  --salida ruta.csv   agrega una fila al CSV de resultados\n"
+        "  --lote B            tamaño de bloque de la cola (solo mpi_dinamico; por defecto 62500)\n"
+        "  --repeticion R      etiqueta de la fila del CSV (0 = calentamiento)\n"
+        "  --calentamiento     marca la fila como calentamiento (repeticion 0)\n"
+        "  --verificar         MPI: compara k e histograma con la referencia secuencial (V1)\n"
         "  --silencioso        no imprime el resumen\n"
         "  --ayuda             esta ayuda\n";
 }
@@ -117,6 +123,8 @@ bool parsear_argumentos(int argc, char** argv, Configuracion& cfg) {
         const std::string a = argv[i];
         if (a == "--ayuda" || a == "--help" || a == "-h") { ayuda(); return false; }
         if (a == "--silencioso") { cfg.silencioso = true; continue; }
+        if (a == "--verificar") { cfg.verificar = true; continue; }
+        if (a == "--calentamiento") { cfg.calentamiento = true; cfg.repeticion = 0; continue; }
         if (a == "--config") { ++i; continue; }
         if (a.rfind("--", 0) != 0) throw std::runtime_error("argumento inesperado: " + a);
         if (i + 1 >= argc) throw std::runtime_error("falta el valor de " + a);
@@ -137,6 +145,7 @@ void validar(const Configuracion& c) {
     if (!prob(p.p01) || !prob(p.p11)) throw std::runtime_error("p01 y p11 deben estar en [0,1]");
     if (!(p.alfa > 0.0) || !(p.theta > 0.0)) throw std::runtime_error("alfa y theta deben ser > 0");
     if (p.capacidad < 0.0 || p.umbral < 0.0) throw std::runtime_error("capacidad y umbral deben ser >= 0");
+    if (c.lote == 0) throw std::runtime_error("lote debe ser > 0");
     if (c.hilos < 0) throw std::runtime_error("hilos debe ser >= 0");
     // c*N + j debe caber en 64 bits para que el índice global sea único.
     if (c.config_id != 0 && c.n > UINT64_MAX / (c.config_id + 1))

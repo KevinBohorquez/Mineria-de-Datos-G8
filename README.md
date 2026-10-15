@@ -12,6 +12,10 @@ La [revisión interna de la definición](docs/acta-revision-definicion.md) regis
 
 La [validación del tablero T07](scripts/validar_cronograma.py) comprueba los 53 IDs y sus campos obligatorios. El [protocolo de gráficos OpenMP T18](docs/protocolo-graficos-openmp.md) define las entradas y salidas del generador; los resultados se crearán cuando existan las mediciones T14 y T16.
 
+Los [contratos de CLI, configuración y CSV (T02)](docs/contratos.md) fijan el índice global, la semilla, el acumulador y el formato de salida que comparten todos los backends. Los ejecutables MPI (T19, T20) usan el núcleo de T11 y se compilan con `-DPP_BUILD_MPI=ON`; ver [`src/backends/mpi`](src/backends/mpi/CMakeLists.txt).
+
+Los [contratos de CLI, configuración y CSV (T02)](docs/contratos.md) fijan el índice global, la semilla, el acumulador y el formato de salida que comparten todos los backends. Los ejecutables MPI (T19, T20) usan el núcleo de T11 y se compilan con `-DPP_BUILD_MPI=ON`; ver [`src/backends/mpi`](src/backends/mpi/CMakeLists.txt).
+
 ## Equipo
 
 | Rol | Integrante | Responsabilidad principal |
@@ -24,6 +28,14 @@ La [validación del tablero T07](scripts/validar_cronograma.py) comprueba los 53
 | R6 | Rhamses | Documentación, gráficos, informe y exposición |
 
 Los roles se asignaron en el orden en que se proporcionaron los nombres. Cualquier cambio de responsables debe reflejarse en ambos cronogramas y en los planes.
+
+## Flujo de contribución (T03)
+
+Cada integrante trabaja en su rama (`angela`, `ashley`, `lita`, `miguel`, `sevan`, `rhamses`), la sube y abre un pull request hacia `master` con la [plantilla](.github/pull_request_template.md). El revisor es el de la columna «Revisor» del cronograma. Un PR por tarea o grupo corto de tareas; solo se tocan los archivos reservados a la tarea. Los mensajes de commit siguen Conventional Commits en español.
+
+## Flujo de contribución (T03)
+
+Cada integrante trabaja en su rama (`angela`, `ashley`, `lita`, `miguel`, `sevan`, `rhamses`), la sube y abre un pull request hacia `master` con la [plantilla](.github/pull_request_template.md). El revisor es el de la columna «Revisor» del cronograma. Un PR por tarea o grupo corto de tareas; solo se tocan los archivos reservados a la tarea. Los mensajes de commit siguen Conventional Commits en español.
 
 ## Plan de trabajo
 

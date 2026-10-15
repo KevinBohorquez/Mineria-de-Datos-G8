@@ -44,6 +44,10 @@ struct Configuracion {
     int hilos = 1;              // solo OpenMP
     std::string schedule = "";  // vacío = respetar OMP_SCHEDULE
     std::string salida = "";    // ruta del CSV (vacío = no escribir)
+    uint64_t lote = 62500;      // tamaño de bloque de la cola (solo mpi_dinamico)
+    int repeticion = 1;         // 0 = calentamiento; 1..5 = medidas
+    bool calentamiento = false;
+    bool verificar = false;     // MPI: comparar con la referencia secuencial (V1)
     bool silencioso = false;
     Parametros params;
 };
@@ -67,6 +71,7 @@ struct MetadatosEjecucion {
     std::string afinidad;       // p. ej. "OMP_PROC_BIND=close;OMP_PLACES=cores"
     std::string schedule_usado; // p. ej. "static" (solo OpenMP)
     int hilos_usados = 1;
+    int procesos = 1;           // procesos MPI (1 si no hay MPI)
 };
 
 MetadatosEjecucion capturar_metadatos();

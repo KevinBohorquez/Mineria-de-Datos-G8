@@ -23,7 +23,7 @@ namespace {
 
 const char* COLUMNAS[] = {"backend", "estacion", "regimen", "config_id", "semilla", "n", "k", "p_hat",
                           "wilson_inf", "wilson_sup", "dias", "capacidad", "umbral", "p01", "p11", "alfa",
-                          "theta", "hilos", "schedule", "afinidad", "tiempo_s", "commit", "cpu",
+                          "theta", "hilos", "procesos", "repeticion", "calentamiento", "schedule", "afinidad", "tiempo_s", "commit", "cpu",
                           "nucleos_fisicos", "nucleos_logicos", "hist512"};
 constexpr size_t NCOL = sizeof(COLUMNAS) / sizeof(COLUMNAS[0]);
 
@@ -103,7 +103,8 @@ std::string fila_csv(const FilaResultado& f) {
         limpiar(f.cfg.backend), limpiar(f.cfg.estacion), limpiar(f.cfg.regimen), std::to_string(f.cfg.config_id),
         std::to_string(f.cfg.semilla), std::to_string(f.acc.n), std::to_string(f.acc.k), num(p_hat), num(ic.inf),
         num(ic.sup), std::to_string(p.dias), num(p.capacidad), num(p.umbral), num(p.p01), num(p.p11), num(p.alfa),
-        num(p.theta), std::to_string(f.meta.hilos_usados), limpiar(f.meta.schedule_usado), limpiar(f.meta.afinidad),
+        num(p.theta), std::to_string(f.meta.hilos_usados), std::to_string(f.meta.procesos),
+        std::to_string(f.cfg.repeticion), f.cfg.calentamiento ? "1" : "0", limpiar(f.meta.schedule_usado), limpiar(f.meta.afinidad),
         num(f.meta.tiempo_s), limpiar(f.meta.commit), limpiar(f.meta.cpu), std::to_string(f.meta.nucleos_fisicos),
         std::to_string(f.meta.nucleos_logicos), h};
     std::string s;
@@ -140,10 +141,12 @@ FilaResultado leer_primera_fila_csv(const std::string& ruta) {
     Parametros& p = f.cfg.params;
     p.dias = std::stoi(v[10]); p.capacidad = std::stod(v[11]); p.umbral = std::stod(v[12]);
     p.p01 = std::stod(v[13]); p.p11 = std::stod(v[14]); p.alfa = std::stod(v[15]); p.theta = std::stod(v[16]);
-    f.meta.hilos_usados = std::stoi(v[17]); f.meta.schedule_usado = v[18]; f.meta.afinidad = v[19];
-    f.meta.tiempo_s = std::stod(v[20]); f.meta.commit = v[21]; f.meta.cpu = v[22];
-    f.meta.nucleos_fisicos = std::stoi(v[23]); f.meta.nucleos_logicos = std::stoi(v[24]);
-    const std::vector<std::string> h = separar(v[25], ';');
+    f.meta.hilos_usados = std::stoi(v[17]); f.meta.procesos = std::stoi(v[18]);
+    f.cfg.repeticion = std::stoi(v[19]); f.cfg.calentamiento = v[20] == "1";
+    f.meta.schedule_usado = v[21]; f.meta.afinidad = v[22];
+    f.meta.tiempo_s = std::stod(v[23]); f.meta.commit = v[24]; f.meta.cpu = v[25];
+    f.meta.nucleos_fisicos = std::stoi(v[26]); f.meta.nucleos_logicos = std::stoi(v[27]);
+    const std::vector<std::string> h = separar(v[28], ';');
     if (h.size() != static_cast<size_t>(NBINS)) throw std::runtime_error("histograma con tamaño inesperado");
     for (size_t i = 0; i < h.size(); ++i) f.acc.hist[i] = std::stoull(h[i]);
     return f;

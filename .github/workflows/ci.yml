@@ -29,3 +29,16 @@ jobs:
           name: v5-archer-log
           path: build/v5_archer.log
           if-no-files-found: ignore
+
+  mpi:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar dependencias
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ python3-pytest openmpi-bin libopenmpi-dev
+      - name: Compilar con MPI
+        run: |
+          cmake -S . -B build-mpi -DCMAKE_BUILD_TYPE=Release -DPP_BUILD_MPI=ON
+          cmake --build build-mpi --parallel
+      - name: Pruebas MPI (V1, V3 y V4 con 1/2/4/8/16 procesos)
+        run: ctest --test-dir build-mpi --output-on-failure
