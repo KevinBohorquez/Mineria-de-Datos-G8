@@ -1,0 +1,14 @@
+# Configuración SINTÉTICA para desarrollo y pruebas (parámetros NO calibrados con SENAMHI; T10 aún sin entregar).
+# Formato provisional hasta que T02 (docs/contratos.md, config/ejemplo.yaml de David) fije el contrato.
+estacion: sintetica
+regimen: normal
+config_id: 0
+semilla: 20261015
+n: 1000000
+dias: 120
+p01: 0.15
+p11: 0.60
+alfa: 0.7
+theta: 9.0
+capacidad: 6
+umbral: 50
