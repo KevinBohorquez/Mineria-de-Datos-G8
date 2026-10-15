@@ -1,15 +1,18 @@
 # T02 | Ejemplo de configuración válida del contrato v1 (docs/contratos.md).
-# Pares clave: valor planos; la CLI tiene prioridad sobre este archivo.
-# Valores de ejemplo, no son resultados ni parámetros calibrados.
-estacion: piura
-regimen: normal            # normal | el_nino
-capacidad_mm_dia: 30       # C, mm/día
-umbral_mm: 50              # U, mm (referencias 30 / 50 / 80)
-dias: 120                  # D, enero-abril
-semilla: 12345             # entero de 64 bits sin signo
-escenarios: 1000000        # N temporadas por configuración
-configuracion_id: 0
-backend: mpi_estatico      # serial | openmp | mpi_estatico | mpi_dinamico | hibrido | cuda
-hilos: 1                   # solo openmp e hibrido
-lote: 62500                # solo mpi_dinamico
-salida: results/raw/mpi_estatico.csv
+# Pares clave: valor planos; las banderas de la CLI tienen prioridad sobre este archivo.
+# Valores de ejemplo con parámetros sintéticos: no son parámetros calibrados ni resultados.
+estacion: sintetica
+regimen: normal            # etiqueta: normal | el_nino
+config_id: 0               # c en el índice global i = c*N + j
+semilla: 20261015          # entero de 64 bits sin signo
+n: 1000000                 # N escenarios de esta configuración
+dias: 120                  # D, días de la temporada
+p01: 0.15                  # P(lluvia hoy | ayer seco)
+p11: 0.60                  # P(lluvia hoy | ayer lluvioso)
+alfa: 0.7                  # forma de la gamma
+theta: 9.0                 # escala de la gamma, mm
+capacidad: 6               # C, mm/día
+umbral: 50                 # U, mm
+hilos: 1                   # solo OpenMP
+lote: 62500                # solo pp_mpi_dinamico
+salida: results/raw/ejemplo.csv

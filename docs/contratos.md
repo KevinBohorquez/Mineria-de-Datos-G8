@@ -2,128 +2,109 @@
 
 **Responsable:** David · **Revisor:** Rhamses · **Versión del contrato:** 1
 
-Este documento fija las interfaces que permiten programar en paralelo. Cada backend (serial, OpenMP, MPI estático, MPI dinámico, híbrido, CUDA) respeta estos contratos; si uno cambia, se edita este archivo en el mismo PR y se sube `version_contrato`.
+Este documento fija las interfaces que comparten los backends. Describe lo que **ya implementan** `pp_serial`, `pp_openmp`, `pp_mpi_estatico` y `pp_mpi_dinamico` (código de Ashley en `src/core`, `src/io`, `src/stats` y de David en `src/backends/mpi`). Si algo cambia, se edita este archivo en el mismo PR y se sube la versión.
 
-## 1. Índice global y semilla
+## 1. Índice global y clave
 
 Una **configuración** `c` es una combinación de estación, régimen, capacidad `C`, umbral `U` y conjunto de parámetros. Cada configuración simula `N` temporadas.
 
 | Concepto | Definición |
 | --- | --- |
-| Índice global | `i = c · N + j`, con `c` = identificador de configuración (entero ≥ 0) y `j ∈ [0, N)`. Un backend que ejecuta una sola configuración usa `c = 0` salvo que se indique `configuracion_id`. |
-| Reparto | Todo backend procesa rangos semiabiertos `[i0, i1)` de índices. El resultado no depende de quién procesa cada índice. |
-| Clave Philox | `clave = splitmix64(semilla + c · 0x9E3779B97F4A7C15)`, de 64 bits; se divide en dos palabras de 32 bits para Philox4x32-10. |
-| Contador Philox | Contiene el índice global del escenario y el día `d`. Ningún generador se siembra por rango MPI, hilo o bloque. |
-| Aritmética de conteos | Siempre `uint64_t` (`MPI_UINT64_T` en MPI). |
+| Índice global | `i = c · N + j`, con `c = config_id` y `j ∈ [0, N)`. Una corrida de una sola configuración usa `config_id = 0` por defecto. |
+| Reparto | Todo backend procesa rangos de `j`; el resultado no depende de quién procesa cada índice. |
+| Clave | `derivar_clave(semilla, c) = splitmix64( splitmix64(semilla) ^ (c · 0xD6E8FEB86659FD93 + 0x2545F4914F6CDD1D) )`, 64 bits, partida en dos palabras de 32 bits para Philox4x32-10. |
+| Contador Philox | `{ i bajo, i alto, día, sub }`; `sub = 0` decide la ocurrencia de lluvia y `sub ≥ 1` los intentos del muestreo gamma. Nada se siembra por proceso, hilo o bloque. |
+| Aritmética de conteos | `uint64_t` (`MPI_UINT64_T` en MPI). El índice global debe caber en 64 bits (`validar` lo comprueba). |
 
-## 2. Función de núcleo
+Referencia: `include/simulacion.hpp` (`simular_escenario(params, clave, idx)` es una función pura).
 
-```cpp
-struct ResultadoEscenario {
-    bool   inundacion;   // Amax > U
-    double maximo_mm;    // Amax, máximo acumulado de la temporada
-};
-ResultadoEscenario simular_escenario(const ParametrosSimulacion& p,
-                                     std::uint64_t clave,
-                                     std::uint64_t indice_global);
-```
+## 2. Acumulador y reducción
 
-Es una función pura: misma entrada, mismo resultado, sin estado compartido. `ParametrosSimulacion` (`include/simulacion.hpp`, T11) contiene `p01, p11, alfa, theta, C, U, D`.
-
-## 3. Acumulador y reducción
-
-Todo backend entrega, por configuración, un acumulador que se suma con `MPI_SUM` / `reduction(+)`:
+Todo backend entrega por configuración un `pp::Acumulador` que se suma con `reduction(+)` o `MPI_SUM`:
 
 | Campo | Tipo | Significado |
 | --- | --- | --- |
-| `k` | `uint64_t` | Escenarios con inundación. |
+| `k` | `uint64_t` | Escenarios con inundación (`Amax > U`). |
 | `n` | `uint64_t` | Escenarios simulados. |
-| `hist[512]` | `uint64_t[512]` | Histograma del máximo acumulado: 512 clases de 1 mm; la clase `b = min(floor(maximo_mm), 511)`. |
+| `hist[512]` | `uint64_t[512]` | Histograma del máximo acumulado en clases de 1 mm: `min(floor(Amax), 511)`. |
 
-**Invariantes** (pruebas V1, V3, V4): `n == N`; `Σ hist == n`; `k` e `hist` son idénticos bit a bit entre backends y para cualquier número de procesos e hilos; dos corridas iguales dan los mismos conteos.
+**Invariantes** (V1, V3, V4): `n == N`; `Σ hist == n`; `k` e `hist` idénticos bit a bit entre `pp_serial`, `pp_openmp`, `pp_mpi_estatico` y `pp_mpi_dinamico` para cualquier número de hilos, procesos y `schedule`; dos corridas iguales dan lo mismo.
 
-## 4. Configuración (YAML)
+## 3. Configuración (YAML plano)
 
-Archivo de texto con pares `clave: valor` planos (sin anidar) y `#` para comentarios. Ejemplo en [`config/ejemplo.yaml`](../config/ejemplo.yaml).
+Pares `clave: valor` sin anidar; `#` inicia un comentario. Ejemplo en [`config/ejemplo.yaml`](../config/ejemplo.yaml). Las banderas de la CLI tienen prioridad.
 
-| Clave | Tipo / unidad | Obligatoria | Por defecto | Validación |
-| --- | --- | --- | --- | --- |
-| `estacion` | texto | sí | — | Nombre de estación del inventario SENAMHI. |
-| `regimen` | `normal` \| `el_nino` | sí | — | Uno de los dos valores. |
-| `capacidad_mm_dia` (`C`) | real, mm/día | sí | — | `> 0`. Rango de diseño 5–65, paso 5. |
-| `umbral_mm` (`U`) | real, mm | sí | — | `> 0`. Referencias 30 / 50 / 80. |
-| `dias` (`D`) | entero | no | 120 | `≥ 1`. |
-| `semilla` | entero sin signo de 64 bits | sí | — | Se registra en cada CSV. |
-| `escenarios` (`N`) | entero sin signo de 64 bits | sí | — | `≥ 1`. Oficial 10⁶ por configuración. |
-| `configuracion_id` (`c`) | entero | no | 0 | `≥ 0`. |
-| `backend` | `serial` \| `openmp` \| `mpi_estatico` \| `mpi_dinamico` \| `hibrido` \| `cuda` | no | el del ejecutable | Uno de los valores; cada ejecutable fija el suyo y avisa si el YAML pide otro. |
-| `hilos` | entero | no | 1 | `≥ 1`. Solo OpenMP e híbrido. |
-| `lote` (`B`) | entero | no | 62 500 | `≥ 1`. Solo `mpi_dinamico`; tamaño de bloque de la cola. |
-| `parametros` | ruta | no | — | CSV de parámetros calibrados (T10). Si falta se usan los de prueba. |
-| `salida` | ruta | no | `results/raw/<backend>.csv` | El archivo se crea o se agrega una fila por corrida. |
+| Clave | Tipo / unidad | Por defecto | Validación |
+| --- | --- | --- | --- |
+| `backend` | texto | el del ejecutable | Lo fija el ejecutable; el archivo no lo cambia. |
+| `estacion` | texto | `sintetica` | Etiqueta que va al CSV. |
+| `regimen` | texto | `normal` | `normal` o `el_nino` (etiqueta). |
+| `config_id` | entero ≥ 0 | 0 | `config_id · n + n` no desborda `uint64`. |
+| `semilla` | entero sin signo de 64 bits | 12345 | Se registra en cada CSV. |
+| `n` | entero sin signo | 1 000 000 | `> 0`. |
+| `dias` (`D`) | entero | 120 | `> 0`. |
+| `p01`, `p11` | probabilidad | 0 | `[0, 1]`. Calibrados por T10. |
+| `alfa`, `theta` | reales; `theta` en mm | 1 | `> 0`. Calibrados por T10. |
+| `capacidad` (`C`) | real, mm/día | 0 | `≥ 0`. Rango de diseño 5–65, paso 5. |
+| `umbral` (`U`) | real, mm | 0 | `≥ 0`. Referencias 30 / 50 / 80. |
+| `hilos` | entero | 1 | `≥ 0`; 0 deja `OMP_NUM_THREADS`. Solo OpenMP e híbrido. |
+| `schedule` | `static` \| `dynamic` \| `guided`, con `:chunk` opcional | vacío | Vacío respeta `OMP_SCHEDULE`. Solo OpenMP e híbrido. |
+| `lote` (`B`) | entero | 62 500 | `> 0`. Solo `pp_mpi_dinamico`. |
+| `repeticion` | entero | 1 | `≥ 0`; 0 = calentamiento. |
+| `salida` | ruta | vacía | Vacía = no escribe CSV. El directorio debe existir. |
 
-## 5. Línea de comandos
+## 4. Línea de comandos
 
-Todos los ejecutables aceptan las mismas opciones; una opción de la CLI **tiene prioridad** sobre el YAML.
+Todos los ejecutables aceptan las mismas opciones (`--ayuda` las lista). Cada clave del YAML tiene su bandera (`--n`, `--semilla` o `--seed`, `--config-id`, `--capacidad`, `--umbral`, `--dias`, `--p01`, `--p11`, `--alfa`, `--theta`, `--estacion`, `--regimen`, `--hilos`, `--schedule`, `--lote`, `--repeticion`, `--salida`) más:
 
 ```text
-<ejecutable> --config RUTA.yaml [--escenarios N] [--semilla S] [--dias D]
-             [--hilos T] [--lote B] [--salida RUTA.csv]
-             [--repeticion R] [--calentamiento] [--verificar]
+<ejecutable> [--config archivo.yaml] [opciones] [--calentamiento] [--verificar] [--silencioso]
 ```
 
-- `--repeticion R` y `--calentamiento` etiquetan la fila del CSV (calentamiento = repetición 0, indicador 1; después repeticiones 1–5 con indicador 0).
-- `--verificar` recalcula en el rango 0 la referencia secuencial y compara `k` e histograma bit a bit (V1); solo para cargas pequeñas.
-- Los ejecutables MPI se lanzan con `mpirun -np P ./ejecutable ...`; el número de procesos lo fija `mpirun`, no el YAML.
-- Códigos de salida: `0` correcto; `1` argumentos o configuración inválidos; `2` falló una verificación (suma ≠ N, histograma inconsistente, V1); `3` error de MPI.
-- La salida estándar incluye el log de verificación (ver §7); el CSV se escribe solo desde el rango 0.
+- `--calentamiento`: marca la fila como calentamiento (repetición 0, indicador 1). Después van las repeticiones 1–5 con indicador 0.
+- `--verificar` (solo MPI): el rango 0 recalcula la referencia secuencial y compara `k` e histograma bit a bit (V1); es para cargas pequeñas.
+- `--silencioso`: no imprime el resumen.
+- Los ejecutables MPI se lanzan con `mpirun -np P`; el número de procesos lo fija `mpirun`.
+- **Códigos de salida:** `0` correcto; `2` error de argumentos, configuración, E/S o MPI; `3` falló una verificación (suma ≠ N en `pp_openmp` y MPI, o V1 en MPI).
 
-## 6. CSV de resultados
+## 5. CSV de resultados
 
-UTF-8, separador coma, fin de línea `\n`, punto decimal. Una fila por corrida y configuración, con esta cabecera exacta:
+UTF-8, separador coma, `\n`, punto decimal, sin comillas. Una fila por corrida y configuración; el archivo se crea con la cabecera y las corridas siguientes se agregan. Cabecera exacta (`pp::encabezado_csv`):
 
 ```csv
-version_contrato,backend,estacion,regimen,capacidad_mm_dia,umbral_mm,dias,semilla,configuracion_id,n_solicitado,n_simulado,inundaciones,p_hat,histograma,procesos,hilos,repeticion,calentamiento,tiempo_s,commit,hardware,afinidad,schedule
+backend,estacion,regimen,config_id,semilla,n,k,p_hat,wilson_inf,wilson_sup,dias,capacidad,umbral,p01,p11,alfa,theta,hilos,procesos,repeticion,calentamiento,schedule,afinidad,tiempo_s,commit,cpu,nucleos_fisicos,nucleos_logicos,hist512
 ```
 
 | Columna | Tipo / unidad | Regla |
 | --- | --- | --- |
-| `version_contrato` | entero | 1. |
-| `backend` | texto | Valor de la clave `backend`. |
-| `estacion`, `regimen` | texto | Copia de la configuración. |
-| `capacidad_mm_dia`, `umbral_mm` | real, mm/día y mm | Copia de la configuración. |
-| `dias`, `semilla`, `configuracion_id` | entero | Copia de la configuración. |
-| `n_solicitado`, `n_simulado` | `uint64` | Deben ser iguales (V3). |
-| `inundaciones` | `uint64` | `k`. |
-| `p_hat` | real | `k / n_simulado`. |
-| `histograma` | 512 enteros separados por `;` | `hist[0] … hist[511]`; su suma es `n_simulado`. |
-| `procesos`, `hilos` | entero | Procesos MPI (1 si no hay MPI) e hilos OpenMP por proceso (1 si no hay). |
-| `repeticion`, `calentamiento` | entero | 0 y 1 para calentamiento; 1–5 y 0 para medidas. |
-| `tiempo_s` | real, segundos | Tiempo transcurrido de pared del cómputo y la reducción (sin leer configuración). |
-| `commit` | texto | Hash corto de Git (`unknown` si no está disponible). |
-| `hardware` | texto | CPU y núcleos físicos del nodo del rango 0, sin comas. |
-| `afinidad` | texto | Política (`OMP_PROC_BIND`, reparto por nodo) o `none`. |
-| `schedule` | texto | `OMP_SCHEDULE` real o `none`. |
+| `backend` | texto | `serial`, `openmp`, `mpi_estatico`, `mpi_dinamico`, `hibrido` o `cuda`. |
+| `estacion`, `regimen`, `config_id`, `semilla` | texto, texto, entero, entero | Copia de la configuración. |
+| `n`, `k` | `uint64` | `n` es lo **simulado** (debe ser igual a lo pedido, V3) y `k` las inundaciones. |
+| `p_hat`, `wilson_inf`, `wilson_sup` | reales | `k / n` e intervalo de Wilson al 95 %. |
+| `dias`, `capacidad`, `umbral`, `p01`, `p11`, `alfa`, `theta` | según §3 | Parámetros usados. |
+| `hilos` | entero | Hilos efectivos por proceso (1 si no hay OpenMP). |
+| `procesos` | entero | Procesos MPI (1 si no hay MPI). |
+| `repeticion`, `calentamiento` | entero | 0 y 1 para calentamiento; 1–5 y 0 para las medidas. |
+| `schedule` | texto | `schedule` efectivo (por ejemplo `dynamic:1`); vacío si no aplica. |
+| `afinidad` | texto | `OMP_PROC_BIND=…;OMP_PLACES=…` (`no_definida` si faltan). |
+| `tiempo_s` | real, segundos | Tiempo de pared del cómputo y la reducción; no incluye leer la configuración. |
+| `commit`, `cpu` | texto | Hash corto de Git y modelo de CPU del nodo del rango 0. |
+| `nucleos_fisicos`, `nucleos_logicos` | entero | Del nodo del rango 0. |
+| `hist512` | 512 enteros separados por `;` | `hist[0] … hist[511]`; su suma es `n`. |
 
-Ejemplo de fila (histograma abreviado para lectura; en el archivo van los 512 valores):
+El generador de gráficos de T18 usa su propio CSV de medición ([`protocolo-graficos-openmp.md`](protocolo-graficos-openmp.md)); falta unificarlo con este.
 
-```csv
-1,mpi_estatico,piura,normal,30,50,120,12345,0,1000000,1000000,18423,0.018423,"999012;610;...;0",4,1,1,0,0.842,02ba40c,"AMD Ryzen 7 (8 nucleos)",none,none
-```
+## 6. Log de verificación (MPI)
 
-El generador de gráficos OpenMP usa su propio CSV de medición (cabecera definida en [`protocolo-graficos-openmp.md`](protocolo-graficos-openmp.md)); este CSV de resultados lo cubre con las columnas equivalentes y añade `procesos` y los conteos.
-
-## 7. Log de verificación
-
-Cada ejecutable MPI imprime en la salida estándar, desde el rango 0, líneas con prefijo `[verif]` para que los scripts de CI las filtren:
+Los ejecutables MPI imprimen desde el rango 0 líneas con prefijo `[verif]`, para que los scripts y el CI las filtren:
 
 ```text
-[verif] backend=mpi_estatico procesos=4 n_solicitado=1000000
-[verif] rango=0 inicio=0 fin=250000 n_local=250000
-[verif] rango=1 inicio=250000 fin=500000 n_local=250000
+[verif] backend=mpi_estatico procesos=4 n_solicitado=10007 nivel_hilos_mpi=1 nucleo=pp_core
+[verif] rango=0 inicio=0 fin=2502 n_local=2502
+[verif] rango=1 inicio=2502 fin=5005 n_local=2503
 ...
-[verif] suma_n=1000000 suma_hist=1000000 k=18423 estado=OK
-[verif] v1_referencia=OK
+[verif] suma_n=10007 suma_n_rangos=10007 suma_hist=10007 k=… estado=OK
+[verif] v1_referencia=OK k_ref=…
 ```
 
-Cualquier `estado` distinto de `OK` termina el programa con código 2.
+En `mpi_dinamico` cada rango informa `bloques=` en lugar de `inicio`/`fin`, y el rango 0 comprueba que los bloques asignados cubran `[0, N)` sin solape ni huecos. Cualquier `estado` distinto de `OK` termina con código 3.
