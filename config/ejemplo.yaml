@@ -1,1 +1,15 @@
-# T02 | Responsable: David | Pendiente: Ejemplo del contrato de configuración.
+# T02 | Ejemplo de configuración válida del contrato v1 (docs/contratos.md).
+# Pares clave: valor planos; la CLI tiene prioridad sobre este archivo.
+# Valores de ejemplo, no son resultados ni parámetros calibrados.
+estacion: piura
+regimen: normal            # normal | el_nino
+capacidad_mm_dia: 30       # C, mm/día
+umbral_mm: 50              # U, mm (referencias 30 / 50 / 80)
+dias: 120                  # D, enero-abril
+semilla: 12345             # entero de 64 bits sin signo
+escenarios: 1000000        # N temporadas por configuración
+configuracion_id: 0
+backend: mpi_estatico      # serial | openmp | mpi_estatico | mpi_dinamico | hibrido | cuda
+hilos: 1                   # solo openmp e hibrido
+lote: 62500                # solo mpi_dinamico
+salida: results/raw/mpi_estatico.csv
