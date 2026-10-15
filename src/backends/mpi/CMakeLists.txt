@@ -6,11 +6,15 @@ add_library(pp_mpi_comun STATIC comun.cpp)
 target_include_directories(pp_mpi_comun PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(pp_mpi_comun PUBLIC MPI::MPI_CXX pp_io pp_stats pp_core)
 
-add_executable(pp_mpi_estatico estatico.cpp)
-target_link_libraries(pp_mpi_estatico PRIVATE pp_mpi_comun)
+# Esquemas de reparto como biblioteca: los reutiliza el híbrido (T24).
+add_library(pp_mpi_esquemas STATIC estatico.cpp dinamico.cpp)
+target_link_libraries(pp_mpi_esquemas PUBLIC pp_mpi_comun)
 
-add_executable(pp_mpi_dinamico dinamico.cpp)
-target_link_libraries(pp_mpi_dinamico PRIVATE pp_mpi_comun)
+add_executable(pp_mpi_estatico main_estatico.cpp)
+target_link_libraries(pp_mpi_estatico PRIVATE pp_mpi_esquemas)
+
+add_executable(pp_mpi_dinamico main_dinamico.cpp)
+target_link_libraries(pp_mpi_dinamico PRIVATE pp_mpi_esquemas)
 
 # Pruebas V1 (referencia secuencial), V3 (suma = N) y V4 (reproducibilidad) con 1/2/4/8/16 procesos.
 # N = 10007 es primo: no es divisible entre ningún número de procesos probado.

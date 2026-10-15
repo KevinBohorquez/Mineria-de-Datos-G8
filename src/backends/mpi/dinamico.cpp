@@ -88,9 +88,3 @@ ResumenRango esquema_dinamico(MPI_Comm comm, const pp::Configuracion& cfg, const
 }
 
 }  // namespace mpi_pi
-
-#ifndef PRUEBA_SIN_MAIN
-int main(int argc, char** argv) {
-    return mpi_pi::ejecutar_mpi(argc, argv, "mpi_dinamico", mpi_pi::esquema_dinamico);
-}
-#endif

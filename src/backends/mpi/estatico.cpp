@@ -30,9 +30,3 @@ ResumenRango esquema_estatico(MPI_Comm comm, const pp::Configuracion& cfg, const
 }
 
 }  // namespace mpi_pi
-
-#ifndef PRUEBA_SIN_MAIN
-int main(int argc, char** argv) {
-    return mpi_pi::ejecutar_mpi(argc, argv, "mpi_estatico", mpi_pi::esquema_estatico);
-}
-#endif

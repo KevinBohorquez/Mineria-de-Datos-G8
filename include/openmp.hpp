@@ -17,4 +17,8 @@ namespace pp {
 Acumulador ejecutar_openmp(const Parametros& p, uint64_t clave, uint64_t config_id, uint64_t n_total,
                            uint64_t j0, uint64_t j1, int hilos, const std::string& schedule);
 
+// Schedule efectivo del runtime ("static", "dynamic:1", ...) y tamaño real del equipo de hilos.
+std::string schedule_actual();
+int hilos_efectivos();
+
 }  // namespace pp
