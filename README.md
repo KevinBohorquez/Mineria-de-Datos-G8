@@ -1,12 +1,16 @@
 # Simulación paralela del riesgo de inundación urbana
 
-Proyecto 8 del curso Programación Concurrente y Paralela, UNMSM 2026-II. El proyecto **aún no tiene implementación ni resultados**. Este repositorio contiene la estructura, archivos reservados por tarea, la definición ajustada, los cronogramas y los planes de desarrollo para seis integrantes.
+Proyecto 8 del curso Programación Concurrente y Paralela, UNMSM 2026-II. El simulador **aún no tiene implementación ni resultados de ejecución**. Este repositorio contiene la estructura, archivos reservados por tarea, la definición ajustada, los cronogramas y los planes de desarrollo para seis integrantes.
 
 ## Propósito
 
 Estimar mediante Monte Carlo la probabilidad de que el agua acumulada supere un umbral durante una temporada de lluvias. El diseño usa precipitación diaria calibrada con series SENAMHI, ocurrencia de lluvia con cadena de Markov, montos gamma y un balance hídrico simplificado. Se compararán versiones secuencial, OpenMP, MPI y MPI + OpenMP. CUDA y un nodo GPU son extensiones condicionadas a la decisión de la semana 10.
 
 La definición y los criterios de aceptación están en [docs/definicion-proyecto.docx](docs/definicion-proyecto.docx). El estado de las tareas se registra en [cronograma/cronograma-interno.xlsx](cronograma/cronograma-interno.xlsx). El resumen de entregables está en [cronograma/cronograma-presentacion.xlsx](cronograma/cronograma-presentacion.xlsx).
+
+La [revisión interna de la definición](docs/acta-revision-definicion.md) registra las decisiones vigentes y las aprobaciones individuales que aún faltan para acreditar T01.
+
+La [validación del tablero T07](scripts/validar_cronograma.py) comprueba los 53 IDs y sus campos obligatorios. El [protocolo de gráficos OpenMP T18](docs/protocolo-graficos-openmp.md) define las entradas y salidas del generador; los resultados se crearán cuando existan las mediciones T14 y T16.
 
 ## Equipo
 
