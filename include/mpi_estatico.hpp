@@ -13,6 +13,6 @@ namespace mpi_pi {
 std::pair<std::uint64_t, std::uint64_t> intervalo_estatico(std::uint64_t n, int rango, int procesos);
 
 // Esquema E1: cada rango procesa su intervalo; la reducción MPI_Reduce la hace ejecutar_mpi.
-ResumenRango esquema_estatico(MPI_Comm comm, const Opciones& o, const FuncionEscenario& escenario, Acumulador& local);
+ResumenRango esquema_estatico(MPI_Comm comm, const pp::Configuracion& cfg, const FuncionEscenario& escenario, pp::Acumulador& local);
 
 }  // namespace mpi_pi

@@ -12,6 +12,6 @@ constexpr int ETIQUETA_STOP = 103;  // maestro -> trabajador: fin, uno por traba
 
 // Esquema E2: el rango 0 reparte bloques de `o.lote` índices; los demás los procesan hasta STOP.
 // Con un solo proceso el rango 0 procesa todo localmente.
-ResumenRango esquema_dinamico(MPI_Comm comm, const Opciones& o, const FuncionEscenario& escenario, Acumulador& local);
+ResumenRango esquema_dinamico(MPI_Comm comm, const pp::Configuracion& cfg, const FuncionEscenario& escenario, pp::Acumulador& local);
 
 }  // namespace mpi_pi

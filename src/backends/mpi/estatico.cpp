@@ -13,12 +13,12 @@ std::pair<std::uint64_t, std::uint64_t> intervalo_estatico(std::uint64_t n, int 
     return {inicio, inicio + cuenta};
 }
 
-ResumenRango esquema_estatico(MPI_Comm comm, const Opciones& o, const FuncionEscenario& escenario, Acumulador& local) {
+ResumenRango esquema_estatico(MPI_Comm comm, const pp::Configuracion& cfg, const FuncionEscenario& escenario, pp::Acumulador& local) {
     int rango = 0, procesos = 1;
     MPI_Comm_rank(comm, &rango);
     MPI_Comm_size(comm, &procesos);
 
-    const auto [inicio, fin] = intervalo_estatico(o.escenarios, rango, procesos);
+    const auto [inicio, fin] = intervalo_estatico(cfg.n, rango, procesos);
     for (std::uint64_t i = inicio; i < fin; ++i) escenario(i, local);
 
     ResumenRango res;

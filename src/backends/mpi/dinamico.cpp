@@ -25,7 +25,7 @@ bool cobertura_exacta(std::vector<Asignacion>& a, std::uint64_t n) {
     return esperado == n;
 }
 
-ResumenRango maestro(MPI_Comm comm, int procesos, const Opciones& o) {
+ResumenRango maestro(MPI_Comm comm, int procesos, const pp::Configuracion& cfg) {
     ResumenRango res;
     std::vector<Asignacion> asignadas;
     std::uint64_t siguiente = 0;
@@ -35,8 +35,8 @@ ResumenRango maestro(MPI_Comm comm, int procesos, const Opciones& o) {
         std::uint64_t basura = 0;
         MPI_Status st;
         MPI_Recv(&basura, 1, MPI_UINT64_T, MPI_ANY_SOURCE, ETIQUETA_REQ, comm, &st);
-        if (siguiente < o.escenarios) {
-            const std::uint64_t i1 = std::min(o.escenarios, siguiente + o.lote);
+        if (siguiente < cfg.n) {
+            const std::uint64_t i1 = std::min(cfg.n, siguiente + cfg.lote);
             const std::uint64_t rango[2] = {siguiente, i1};
             MPI_Send(rango, 2, MPI_UINT64_T, st.MPI_SOURCE, ETIQUETA_WORK, comm);
             asignadas.push_back({siguiente, i1});
@@ -48,11 +48,11 @@ ResumenRango maestro(MPI_Comm comm, int procesos, const Opciones& o) {
         }
     }
     res.bloques = asignadas.size();
-    res.coherente = cobertura_exacta(asignadas, o.escenarios);
+    res.coherente = cobertura_exacta(asignadas, cfg.n);
     return res;
 }
 
-ResumenRango trabajador(MPI_Comm comm, const FuncionEscenario& escenario, Acumulador& local) {
+ResumenRango trabajador(MPI_Comm comm, const FuncionEscenario& escenario, pp::Acumulador& local) {
     ResumenRango res;
     for (;;) {
         const std::uint64_t pedido = 0;
@@ -69,17 +69,17 @@ ResumenRango trabajador(MPI_Comm comm, const FuncionEscenario& escenario, Acumul
 
 }  // namespace
 
-ResumenRango esquema_dinamico(MPI_Comm comm, const Opciones& o, const FuncionEscenario& escenario, Acumulador& local) {
+ResumenRango esquema_dinamico(MPI_Comm comm, const pp::Configuracion& cfg, const FuncionEscenario& escenario, pp::Acumulador& local) {
     int rango = 0, procesos = 1;
     MPI_Comm_rank(comm, &rango);
     MPI_Comm_size(comm, &procesos);
 
     ResumenRango res;
     if (procesos == 1) {  // sin trabajadores, el rango 0 procesa todo
-        for (std::uint64_t i = 0; i < o.escenarios; ++i) escenario(i, local);
+        for (std::uint64_t i = 0; i < cfg.n; ++i) escenario(i, local);
         res.bloques = 1;
     } else if (rango == 0) {
-        res = maestro(comm, procesos, o);
+        res = maestro(comm, procesos, cfg);
     } else {
         res = trabajador(comm, escenario, local);
     }
