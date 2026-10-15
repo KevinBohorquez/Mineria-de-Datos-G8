@@ -12,9 +12,9 @@ La [revisión interna de la definición](docs/acta-revision-definicion.md) regis
 
 La [validación del tablero T07](scripts/validar_cronograma.py) comprueba los 53 IDs y sus campos obligatorios. El [protocolo de gráficos OpenMP T18](docs/protocolo-graficos-openmp.md) define las entradas y salidas del generador; los resultados se crearán cuando existan las mediciones T14 y T16.
 
-Los [contratos de CLI, configuración y CSV (T02)](docs/contratos.md) fijan el índice global, la semilla, el acumulador y el formato de salida que comparten todos los backends. Los ejecutables MPI (T19, T20) usan el núcleo de T11 y se compilan con `-DPP_BUILD_MPI=ON`; ver [`src/backends/mpi`](src/backends/mpi/CMakeLists.txt).
+Los [contratos de CLI, configuración y CSV (T02)](docs/contratos.md) fijan el índice global, la semilla, el acumulador y el formato de salida que comparten todos los backends. Los ejecutables MPI (T19, T20) y el híbrido MPI + OpenMP (T24) usan el núcleo de T11 y se compilan con `-DPP_BUILD_MPI=ON`; ver [`src/backends/mpi`](src/backends/mpi/CMakeLists.txt) y [`src/backends/hybrid`](src/backends/hybrid/CMakeLists.txt).
 
-Los [contratos de CLI, configuración y CSV (T02)](docs/contratos.md) fijan el índice global, la semilla, el acumulador y el formato de salida que comparten todos los backends. Los ejecutables MPI (T19, T20) usan el núcleo de T11 y se compilan con `-DPP_BUILD_MPI=ON`; ver [`src/backends/mpi`](src/backends/mpi/CMakeLists.txt).
+Los [contratos de CLI, configuración y CSV (T02)](docs/contratos.md) fijan el índice global, la semilla, el acumulador y el formato de salida que comparten todos los backends. Los ejecutables MPI (T19, T20) y el híbrido MPI + OpenMP (T24) usan el núcleo de T11 y se compilan con `-DPP_BUILD_MPI=ON`; ver [`src/backends/mpi`](src/backends/mpi/CMakeLists.txt) y [`src/backends/hybrid`](src/backends/hybrid/CMakeLists.txt).
 
 ## Equipo
 

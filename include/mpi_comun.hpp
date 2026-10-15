@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 
 #include "resultados.hpp"
 
@@ -20,6 +21,8 @@ struct ResumenRango {
     std::uint64_t fin = 0;
     std::uint64_t bloques = 0;
     std::uint64_t n_local = 0;
+    std::uint64_t hilos = 1;     // hilos OpenMP efectivos de este rango (1 si no hay OpenMP)
+    std::string schedule;        // schedule efectivo de este rango (vacío si no hay OpenMP)
     bool coherente = true;
 };
 

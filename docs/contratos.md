@@ -108,3 +108,15 @@ Los ejecutables MPI imprimen desde el rango 0 líneas con prefijo `[verif]`, par
 ```
 
 En `mpi_dinamico` cada rango informa `bloques=` en lugar de `inicio`/`fin`, y el rango 0 comprueba que los bloques asignados cubran `[0, N)` sin solape ni huecos. Cualquier `estado` distinto de `OK` termina con código 3.
+
+### Híbrido MPI + OpenMP (`pp_hibrido`)
+
+Reparte `[0, N)` entre los procesos como `pp_mpi_estatico` y, dentro de cada proceso, llama a `ejecutar_openmp` con `--hilos` hilos y `--schedule`. Solo el hilo principal llama a MPI: se inicializa con `MPI_Init_thread(MPI_THREAD_FUNNELED)`, el nivel concedido se registra en `nivel_hilos_mpi=` y, si es menor que FUNNELED, termina con código 2. El presupuesto de núcleos es `procesos × hilos`.
+
+```text
+[verif] backend=hibrido procesos=2 n_solicitado=10007 nivel_hilos_mpi=MPI_THREAD_FUNNELED nucleo=pp_core
+[verif] hibrido procesos=2 hilos_por_proceso=4 nucleos_totales=8 schedule=dynamic:7 OMP_PROC_BIND=close OMP_PLACES=cores
+[verif] rango=0 inicio=0 fin=5004 hilos=4 n_local=5004
+```
+
+En el CSV, `procesos` es P y `hilos` son los hilos efectivos por proceso. **Afinidad:** use `OMP_PROC_BIND=close OMP_PLACES=cores` y lance con `mpirun --bind-to none` (Open MPI ancla cada proceso a un núcleo y todos sus hilos compartirían ese núcleo) o con `--map-by ppr:1:node:PE=<hilos>` para reservar `hilos` núcleos por proceso. Un `procesos × hilos` mayor que los núcleos físicos del equipo está sobresuscrito y se analiza aparte.

@@ -2,6 +2,7 @@
 #include "mpi_comun.hpp"
 
 #include <algorithm>
+#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <stdexcept>
@@ -10,6 +11,23 @@
 #include "simulacion.hpp"
 
 namespace mpi_pi {
+
+namespace {
+const char* nombre_nivel(int nivel) {
+    switch (nivel) {
+        case MPI_THREAD_SINGLE: return "MPI_THREAD_SINGLE";
+        case MPI_THREAD_FUNNELED: return "MPI_THREAD_FUNNELED";
+        case MPI_THREAD_SERIALIZED: return "MPI_THREAD_SERIALIZED";
+        case MPI_THREAD_MULTIPLE: return "MPI_THREAD_MULTIPLE";
+        default: return "desconocido";
+    }
+}
+
+const char* entorno_o(const char* nombre, const char* defecto) {
+    const char* e = std::getenv(nombre);
+    return (e && *e) ? e : defecto;
+}
+}  // namespace
 
 FuncionEscenario escenario_del_modelo(const pp::Configuracion& cfg) {
     const pp::Parametros params = cfg.params;
@@ -39,6 +57,14 @@ int ejecutar_mpi(int argc, char** argv, const char* backend, const Esquema& esqu
     }
     cfg.backend = backend;  // la etiqueta la fija el ejecutable, no el archivo de configuración
 
+    // El híbrido llama a MPI solo desde el hilo principal: exige al menos MPI_THREAD_FUNNELED.
+    if (cfg.backend == "hibrido" && provisto < MPI_THREAD_FUNNELED) {
+        if (rango == 0)
+            std::cerr << "error: MPI concedió " << nombre_nivel(provisto) << " y el híbrido exige MPI_THREAD_FUNNELED\n";
+        MPI_Finalize();
+        return 2;
+    }
+
     int codigo = 0;
     try {
         const FuncionEscenario escenario = escenario_del_modelo(cfg);
@@ -56,9 +82,9 @@ int ejecutar_mpi(int argc, char** argv, const char* backend, const Esquema& esqu
         MPI_Reduce(en.data(), fuera.data(), 2 + pp::NBINS, MPI_UINT64_T, MPI_SUM, 0, MPI_COMM_WORLD);
         const double tiempo = MPI_Wtime() - t0;
 
-        const std::uint64_t mio[5] = {res.inicio, res.fin, res.bloques, res.n_local, res.coherente ? 1ULL : 0ULL};
-        std::vector<std::uint64_t> todos(rango == 0 ? 5 * static_cast<size_t>(procesos) : 0);
-        MPI_Gather(mio, 5, MPI_UINT64_T, todos.data(), 5, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+        const std::uint64_t mio[6] = {res.inicio, res.fin, res.bloques, res.n_local, res.coherente ? 1ULL : 0ULL, res.hilos};
+        std::vector<std::uint64_t> todos(rango == 0 ? 6 * static_cast<size_t>(procesos) : 0);
+        MPI_Gather(mio, 6, MPI_UINT64_T, todos.data(), 6, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
         if (rango == 0) {
             pp::Acumulador g;
@@ -67,22 +93,28 @@ int ejecutar_mpi(int argc, char** argv, const char* backend, const Esquema& esqu
             std::copy(fuera.begin() + 2, fuera.end(), g.hist.begin());
 
             std::cout << "[verif] backend=" << cfg.backend << " procesos=" << procesos << " n_solicitado=" << cfg.n
-                      << " nivel_hilos_mpi=" << provisto << " nucleo=pp_core\n";
+                      << " nivel_hilos_mpi=" << nombre_nivel(provisto) << " nucleo=pp_core\n";
+            if (cfg.backend == "hibrido")
+                std::cout << "[verif] hibrido procesos=" << procesos << " hilos_por_proceso=" << res.hilos
+                          << " nucleos_totales=" << static_cast<std::uint64_t>(procesos) * res.hilos
+                          << " schedule=" << res.schedule << " OMP_PROC_BIND=" << entorno_o("OMP_PROC_BIND", "no_definida")
+                          << " OMP_PLACES=" << entorno_o("OMP_PLACES", "no_definida") << '\n';
             std::uint64_t suma_local = 0;
             bool coherentes = true;
             for (int r = 0; r < procesos; ++r) {
-                const std::uint64_t* t = &todos[5 * static_cast<size_t>(r)];
+                const std::uint64_t* t = &todos[6 * static_cast<size_t>(r)];
                 std::cout << "[verif] rango=" << r;
-                if (cfg.backend == "mpi_estatico") std::cout << " inicio=" << t[0] << " fin=" << t[1];
-                else std::cout << " bloques=" << t[2];
+                if (cfg.backend == "mpi_dinamico") std::cout << " bloques=" << t[2];
+                else std::cout << " inicio=" << t[0] << " fin=" << t[1];
+                if (cfg.backend == "hibrido") std::cout << " hilos=" << t[5];
                 std::cout << " n_local=" << t[3] << '\n';
                 suma_local += t[3];
                 coherentes = coherentes && t[4] == 1;
             }
-            if (cfg.backend == "mpi_estatico") {  // intervalos contiguos, sin solape ni huecos
+            if (cfg.backend != "mpi_dinamico") {  // intervalos contiguos, sin solape ni huecos
                 std::uint64_t esperado = 0;
                 for (int r = 0; r < procesos; ++r) {
-                    const std::uint64_t* t = &todos[5 * static_cast<size_t>(r)];
+                    const std::uint64_t* t = &todos[6 * static_cast<size_t>(r)];
                     if (t[0] != esperado || t[1] < t[0]) coherentes = false;
                     esperado = t[1];
                 }
@@ -110,7 +142,8 @@ int ejecutar_mpi(int argc, char** argv, const char* backend, const Esquema& esqu
                 fila.acc = g;
                 fila.meta = pp::capturar_metadatos();
                 fila.meta.tiempo_s = tiempo;
-                fila.meta.hilos_usados = 1;
+                fila.meta.hilos_usados = static_cast<int>(res.hilos);
+                fila.meta.schedule_usado = res.schedule;
                 fila.meta.procesos = procesos;
                 if (!cfg.silencioso) pp::imprimir_resumen(fila);
                 if (!cfg.salida.empty()) pp::escribir_csv(cfg.salida, fila);
