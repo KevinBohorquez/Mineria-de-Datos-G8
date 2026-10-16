@@ -17,6 +17,7 @@
 *.obj
 *.exe
 *.log
+!/results/evidencia/*.log
 __pycache__/
 .venv/
 ~$*.docx
