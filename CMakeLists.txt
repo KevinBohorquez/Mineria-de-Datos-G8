@@ -53,12 +53,18 @@ add_executable(smoke tests/smoke/smoke.cpp)
 target_link_libraries(smoke PRIVATE pp_io pp_stats pp_core)
 add_test(NAME smoke COMMAND smoke)
 
+find_package(Python3 COMPONENTS Interpreter QUIET)
+
 # V1 (equivalencia serial vs OpenMP): pytest sobre los ejecutables compilados (T17)
-if(PP_BUILD_OPENMP)
-  find_package(Python3 COMPONENTS Interpreter QUIET)
-  if(Python3_FOUND)
-    add_test(NAME v1_equivalencia_openmp
-             COMMAND ${Python3_EXECUTABLE} -m pytest -q ${PROJECT_SOURCE_DIR}/tests/integration/test_openmp_equivalencia.py)
-    set_tests_properties(v1_equivalencia_openmp PROPERTIES ENVIRONMENT "PP_BIN_DIR=${CMAKE_BINARY_DIR}/src/backends")
-  endif()
+if(PP_BUILD_OPENMP AND Python3_FOUND)
+  add_test(NAME v1_equivalencia_openmp
+           COMMAND ${Python3_EXECUTABLE} -m pytest -q ${PROJECT_SOURCE_DIR}/tests/integration/test_openmp_equivalencia.py)
+  set_tests_properties(v1_equivalencia_openmp PROPERTIES ENVIRONMENT "PP_BIN_DIR=${CMAKE_BINARY_DIR}/src/backends")
+endif()
+
+# V7 (caso analítico con D = 1 frente al IC de Wilson): pytest sobre pp_serial (T13)
+if(Python3_FOUND)
+  add_test(NAME v7_analitico
+           COMMAND ${Python3_EXECUTABLE} -m pytest -q ${PROJECT_SOURCE_DIR}/tests/unit/test_analitico.py)
+  set_tests_properties(v7_analitico PROPERTIES ENVIRONMENT "PP_BIN_DIR=${CMAKE_BINARY_DIR}/src/backends")
 endif()
