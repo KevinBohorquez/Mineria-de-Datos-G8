@@ -8,12 +8,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # - cmake, g++, clang, libomp-dev, python3-pytest: trabajo "construir-y-probar" de la CI (V5 usa clang + Archer).
 # - openmpi-bin, libopenmpi-dev: trabajo "mpi" de la CI.
+# - libclang-rt-18-dev: runtime de ThreadSanitizer para V5 (el runner de GitHub ya lo trae).
 # - git: src/io/CMakeLists.txt registra el commit en los metadatos.
 # - python3-matplotlib, python3-scipy: gráficos y análisis de scripts/bench.
 # - openssh-client, openssh-server: lanzamiento de mpirun entre dos contenedores (compose-hello.yaml).
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      ca-certificates cmake make g++ clang libomp-dev \
+      ca-certificates cmake make g++ clang libomp-dev libclang-rt-18-dev \
       openmpi-bin libopenmpi-dev \
       git python3 python3-pytest python3-matplotlib python3-scipy \
       openssh-client openssh-server iproute2 procps \
