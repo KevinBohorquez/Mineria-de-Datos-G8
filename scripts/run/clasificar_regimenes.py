@@ -29,11 +29,27 @@ import csv
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[2]
+INVENTARIO = RAIZ / "data" / "metadata" / "inventario_senamhi.csv"
 AUDITORIA = RAIZ / "data" / "processed" / "auditoria_calidad.csv"
 ICEN = RAIZ / "data" / "external" / "icen.txt"
 SALIDA = RAIZ / "data" / "processed" / "regimenes.csv"
 
-MESES_TEMPORADA = (1, 2, 3, 4)
+# Ventana por zona (igual que auditoria_datos.py; propuesta confirmada por
+# Kevin/Rhamses el 2026-10-15) y excepcion de Chosica (valle andino, lluvia
+# convectiva de verano, no garua costera: ver auditoria_datos.py).
+MESES_TEMPORADA_POR_ZONA = {
+    "costa_norte": (1, 2, 3, 4),
+    "lima": (6, 7, 8, 9),
+}
+MESES_TEMPORADA_OVERRIDE = {
+    "lima_chosica": (1, 2, 3, 4),
+}
+
+
+def meses_temporada_de(id_est: str, zona: str) -> tuple[int, ...]:
+    return MESES_TEMPORADA_OVERRIDE.get(id_est, MESES_TEMPORADA_POR_ZONA[zona])
+
+
 UMBRAL_CALIDA = 0.4
 MIN_MESES_EVENTO = 3
 FUENTE = (
@@ -100,6 +116,9 @@ def main() -> int:
     icen = cargar_icen()
     meses_nino = meses_en_evento_el_nino(icen)
 
+    with INVENTARIO.open(newline="", encoding="utf-8") as f:
+        zona_por_estacion = {f_["id_estacion"]: f_["zona"] for f_ in csv.DictReader(f)}
+
     with AUDITORIA.open(newline="", encoding="utf-8") as f:
         filas = list(csv.DictReader(f))
 
@@ -108,14 +127,16 @@ def main() -> int:
         if fila["elegible"] != "True":
             continue
         anio = int(fila["anio"])
-        es_nino = any((anio, mes) in meses_nino for mes in MESES_TEMPORADA)
+        zona = zona_por_estacion.get(fila["estacion"], "costa_norte")
+        meses_temporada = meses_temporada_de(fila["estacion"], zona)
+        es_nino = any((anio, mes) in meses_nino for mes in meses_temporada)
         regimen = "el_nino" if es_nino else "normal"
         salida_filas.append(
             {
                 "estacion": fila["estacion"],
                 "anio": anio,
                 "regimen": regimen,
-                "regla": "ICEN > 0.4 en >= 3 meses consecutivos (ENFEN 2012), evaluado en enero-abril",
+                "regla": f"ICEN > 0.4 en >= 3 meses consecutivos (ENFEN 2012), evaluado en meses {meses_temporada} (zona {zona})",
                 "fuente": FUENTE,
             }
         )

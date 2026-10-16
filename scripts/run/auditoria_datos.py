@@ -33,17 +33,42 @@ SALIDA_MD = RAIZ / "docs" / "auditoria-datos.md"
 
 UMBRAL_FALTANTES = 0.10
 UMBRAL_ATIPICO_MM = 150.0  # mm en un dia; por encima se marca para revision manual, no se descarta.
-MESES_TEMPORADA = (1, 2, 3, 4)  # enero-abril, D=120 dias (definicion del proyecto, 6.2)
+
+# Ventana de temporada por zona: costa norte usa enero-abril (definicion 6.2,
+# El Nino costero); Lima usa junio-setiembre (garua de invierno: el evento
+# que origina el proyecto, Villa El Salvador, fue en agosto 2026 -- ver
+# referencia [20] de la definicion). Propuesta confirmada por Kevin/Rhamses
+# el 2026-10-15.
+MESES_TEMPORADA_POR_ZONA = {
+    "costa_norte": (1, 2, 3, 4),
+    "lima": (6, 7, 8, 9),
+}
+
+# Chosica es un valle andino (Rimac, ~860 m) con lluvia convectiva de verano
+# -- el huaico de 2017 que la hizo famosa fue en marzo -- no garua costera
+# como el resto de Lima (verificado en los datos: 8.1% de dias lluviosos en
+# enero-abril vs 0.25% en junio-setiembre). Usa la temporada de costa norte
+# en vez de la de su zona. Ajuste confirmado por Kevin/Rhamses el 2026-10-15.
+MESES_TEMPORADA_OVERRIDE = {
+    "lima_chosica": (1, 2, 3, 4),
+}
 
 
-def dias_temporada(anio: int) -> int:
-    """Dias de enero a abril (la 'temporada' que define el proyecto), 120 o
-    121 en anio bisiesto por el 29 de febrero."""
-    bisiesto = anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)
-    return 31 + (29 if bisiesto else 28) + 31 + 30
+def meses_temporada_de(id_est: str, zona: str) -> tuple[int, ...]:
+    return MESES_TEMPORADA_OVERRIDE.get(id_est, MESES_TEMPORADA_POR_ZONA[zona])
 
 
-def auditar_estacion(id_est: str, ruta: Path) -> list[dict]:
+def dias_temporada(anio: int, meses_temporada: tuple[int, ...]) -> int:
+    """Dias de la temporada. Enero-abril: 120 o 121 en anio bisiesto (29 de
+    febrero). Junio-setiembre: 122, sin bisiesto."""
+    if meses_temporada == (1, 2, 3, 4):
+        bisiesto = anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)
+        return 31 + (29 if bisiesto else 28) + 31 + 30
+    return 30 + 31 + 31 + 30  # jun+jul+ago+set
+
+
+def auditar_estacion(id_est: str, ruta: Path, zona: str) -> list[dict]:
+    meses_temporada = meses_temporada_de(id_est, zona)
     with ruta.open(newline="", encoding="utf-8") as f:
         filas_crudas = list(csv.DictReader(f))
 
@@ -53,8 +78,8 @@ def auditar_estacion(id_est: str, ruta: Path) -> list[dict]:
 
     for fila in filas_crudas:
         fecha = dt.date.fromisoformat(fila["fecha"])
-        if fecha.month not in MESES_TEMPORADA:
-            continue  # fuera de la temporada enero-abril: no entra a la auditoria (6.2 / 7.6)
+        if fecha.month not in meses_temporada:
+            continue  # fuera de la temporada de la zona: no entra a la auditoria (6.2 / 7.6)
         clave = (fecha.year, fila["fecha"])
         vistos[clave] += 1
         if vistos[clave] > 1:
@@ -64,7 +89,7 @@ def auditar_estacion(id_est: str, ruta: Path) -> list[dict]:
     resultados = []
     for anio in sorted(por_anio):
         filas_anio = por_anio[anio]
-        esperados = dias_temporada(anio)
+        esperados = dias_temporada(anio, meses_temporada)
         faltantes = sum(1 for r in filas_anio if r["precipitacion_mm"] == "")
         negativos = sum(1 for r in filas_anio if r["precipitacion_mm"] not in ("",) and float(r["precipitacion_mm"]) < 0)
         atipicos = sum(
@@ -112,11 +137,12 @@ def main() -> int:
     todas_filas: list[dict] = []
     for fila in estaciones:
         id_est = fila["id_estacion"]
+        zona = fila["zona"]
         ruta = RAW_DIR / f"{id_est}.csv"
         if not ruta.exists():
             print(f"Aviso: falta {ruta}, se omite {id_est} ({fila['nombre_estacion']}).")
             continue
-        todas_filas.extend(auditar_estacion(id_est, ruta))
+        todas_filas.extend(auditar_estacion(id_est, ruta, zona))
 
     SALIDA_CSV.parent.mkdir(parents=True, exist_ok=True)
     campos = [
@@ -160,9 +186,11 @@ def main() -> int:
         "queda como respaldo si alguna estacion real deja de estar disponible.\n\n"
         "## Regla de exclusion\n\n"
         f"Una combinacion estacion/anio es elegible si tiene menos de {UMBRAL_FALTANTES*100:.0f}% "
-        "de dias faltantes **en la temporada enero-abril** (120/121 dias, no en el anio completo; "
-        "definicion 6.2 y 7.6) y no tiene valores negativos sin corregir. Una estacion completa es "
-        "elegible si al menos el 90% de sus anios cumplen la regla anterior.\n\n"
+        "de dias faltantes **en la temporada de su zona** (no en el anio completo; definicion 6.2 y 7.6): "
+        "costa norte usa enero-abril (120/121 dias); Lima usa junio-setiembre (122 dias, propuesta "
+        "confirmada por Kevin/Rhamses el 2026-10-15, ver `docs/plan-desarrollo-semana-8.md`). No tiene "
+        "valores negativos sin corregir. Una estacion completa es elegible si al menos el 90% de sus "
+        "anios cumplen la regla anterior.\n\n"
         "## Resultado por estacion\n\n"
         "| ID | Estacion | Anios auditados | Anios elegibles | % faltantes promedio | Estacion elegible |\n"
         "| --- | --- | --- | --- | --- | --- |\n"

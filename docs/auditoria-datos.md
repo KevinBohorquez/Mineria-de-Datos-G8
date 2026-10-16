@@ -6,7 +6,7 @@ Series reales descargadas del portal oficial de SENAMHI (cuenta registrada) para
 
 ## Regla de exclusion
 
-Una combinacion estacion/anio es elegible si tiene menos de 10% de dias faltantes **en la temporada enero-abril** (120/121 dias, no en el anio completo; definicion 6.2 y 7.6) y no tiene valores negativos sin corregir. Una estacion completa es elegible si al menos el 90% de sus anios cumplen la regla anterior.
+Una combinacion estacion/anio es elegible si tiene menos de 10% de dias faltantes **en la temporada de su zona** (no en el anio completo; definicion 6.2 y 7.6): costa norte usa enero-abril (120/121 dias); Lima usa junio-setiembre (122 dias, propuesta confirmada por Kevin/Rhamses el 2026-10-15, ver `docs/plan-desarrollo-semana-8.md`). No tiene valores negativos sin corregir. Una estacion completa es elegible si al menos el 90% de sus anios cumplen la regla anterior.
 
 ## Resultado por estacion
 
@@ -19,7 +19,7 @@ Una combinacion estacion/anio es elegible si tiene menos de 10% de dias faltante
 | tumbes_eltigre | El Tigre | 50 | 47 | 4.53% | Si |
 | lambayeque_lambayeque | Lambayeque | 86 | 74 | 8.90% | No |
 | lima_chosica | Chosica | 25 | 23 | 3.93% | Si |
-| lima_canete | Cañete | 74 | 38 | 47.36% | No |
+| lima_canete | Cañete | 75 | 39 | 42.57% | No |
 
 **Estaciones elegibles: 4 de 8** (criterio de T08 exige >= 3). Cumple.
 

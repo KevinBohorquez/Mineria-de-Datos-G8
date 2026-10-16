@@ -21,7 +21,14 @@ import csv
 import datetime as dt
 import math
 import random
+import zlib
 from pathlib import Path
+
+
+def hash_estable(texto: str) -> int:
+    """hash() de Python varia entre ejecuciones (PYTHONHASHSEED aleatorio);
+    crc32 es determinista entre corridas, maquinas y versiones de Python."""
+    return zlib.crc32(texto.encode("utf-8"))
 
 RAIZ = Path(__file__).resolve().parents[2]
 INVENTARIO = RAIZ / "data" / "metadata" / "inventario_senamhi.csv"
@@ -99,7 +106,7 @@ def main() -> int:
         id_est = fila["id_estacion"]
         inicio = dt.date.fromisoformat(fila["fecha_inicio"])
         fin = dt.date.fromisoformat(fila["fecha_fin"])
-        semilla_estacion = args.semilla ^ hash(id_est) & 0xFFFFFFFF
+        semilla_estacion = args.semilla ^ hash_estable(id_est)
         serie = generar_serie(id_est, inicio, fin, semilla_estacion)
         ruta = SALIDA_DIR / f"{id_est}.csv"
         with ruta.open("w", newline="", encoding="utf-8") as out:
