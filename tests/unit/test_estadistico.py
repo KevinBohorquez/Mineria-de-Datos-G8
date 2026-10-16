@@ -9,15 +9,18 @@
 #   1. Frente al modelo: la referencia es el valor EXACTO que implica Markov + gamma con los mismos
 #      parámetros. Verifica el código del generador; corre en CTest y en el CI.
 #   2. Frente a lo observado (test_v6_frente_a_observado): series SENAMHI y parametros.csv de T06–T10,
-#      que no están en Git. Se compara en la temporada de la definición (enero–abril, D = 120) con día
-#      lluvioso >= 0,1 mm. Se omite si faltan los datos y no forma parte de CTest.
+#      que no están en Git. Se compara en la temporada de cada zona, la misma que usa calibrar.py
+#      (costa norte y Chosica enero–abril; Lima junio–setiembre), con día lluvioso >= 0,1 mm.
+#      Se omite si faltan los datos y no forma parte de CTest.
 #
 # Uso (tras compilar):  python3 -m pytest -v -s tests/unit/test_estadistico.py
 # Variables opcionales: PP_V6_GENERADOR=<ruta a pp_v6_generador> (por defecto build/pp_v6_generador)
 #                       PP_V6_N=<temporadas>  (por defecto 20000; la definición usa 10^8 para la corrida oficial)
 #                       PP_V6_PARAMETROS, PP_V6_UMBRAL_LLUVIA, PP_V6_N_OBS (parte 2; ver más abajo)
+import calendar
 import csv
 import datetime
+import importlib.util
 import math
 import os
 import statistics
@@ -143,14 +146,21 @@ def test_v6_control_negativo_detecta_parametros_equivocados():
 DATOS_RAW = RAIZ / "data" / "raw"
 PARAMETROS = Path(os.environ.get("PP_V6_PARAMETROS", RAIZ / "data" / "processed" / "parametros.csv"))
 REGIMENES = RAIZ / "data" / "processed" / "regimenes.csv"
-# Umbral de día lluvioso en la serie OBSERVADA; debe ser el mismo con el que se calibró parametros.csv.
-# En lo simulado todo día lluvioso del modelo cuenta, porque la gamma se ajustó a esos días.
-# Definición §7.6: >= 0,1 mm. calibrar.py (T10, 15/10/2026) usa > 0, que aquí se indica con 0.
+# Umbral de día lluvioso en la serie OBSERVADA; debe ser el mismo con el que se calibró parametros.csv
+# (definición §7.6: >= 0,1 mm; 0 significa > 0). En lo simulado todo día lluvioso del modelo cuenta,
+# porque la gamma se ajustó a esos días.
 UMBRAL_LLUVIA = float(os.environ.get("PP_V6_UMBRAL_LLUVIA", "0.1"))
 N_OBS = int(os.environ.get("PP_V6_N_OBS", "20000"))  # temporadas simuladas por grupo
-# Definición §6: D = 120 días, temporada enero–abril (costa norte). Se comparan solo esos meses.
-MESES_TEMPORADA = range(1, 5)
-DIAS_TEMPORADA_OBS = 120
+
+
+def temporada_de(estacion):
+    """Meses y días de la temporada de la estación, tomados de calibrar.py (T10) para usar la misma
+    ventana que la calibración: costa norte y Chosica enero–abril (120 d), Lima junio–setiembre (122 d)."""
+    spec = importlib.util.spec_from_file_location("calibrar_t10", RAIZ / "scripts" / "run" / "calibrar.py")
+    calibrar = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(calibrar)
+    meses = calibrar.meses_temporada_de(estacion, calibrar.cargar_zonas().get(estacion, "costa_norte"))
+    return meses, sum(calendar.monthrange(2001, m)[1] for m in meses)  # 2001: año no bisiesto
 
 
 def grupos_calibrados():
@@ -163,9 +173,9 @@ def grupos_calibrados():
                 for fila in csv.DictReader(f)]
 
 
-def estadisticos_observados(estacion, regimen, umbral):
-    """Enero–abril de los años de regimenes.csv con ese régimen. Un día faltante o un salto de fechas
-    corta la racha abierta sin contarla, igual que el auxiliar solo cuenta rachas cerradas."""
+def estadisticos_observados(estacion, regimen, umbral, meses):
+    """Meses de la temporada en los años de regimenes.csv con ese régimen. Un día faltante o un salto de
+    fechas corta la racha abierta sin contarla, igual que el auxiliar solo cuenta rachas cerradas."""
     with REGIMENES.open(newline="", encoding="utf-8") as f:
         anios = {int(r["anio"]) for r in csv.DictReader(f) if r["estacion"] == estacion and r["regimen"] == regimen}
     dias = rachas = dias_en_rachas = racha = 0
@@ -173,7 +183,7 @@ def estadisticos_observados(estacion, regimen, umbral):
     with (DATOS_RAW / f"{estacion}.csv").open(newline="", encoding="utf-8") as f:
         for fila in csv.DictReader(f):
             fecha = datetime.date.fromisoformat(fila["fecha"])
-            if fecha.year not in anios or fecha.month not in MESES_TEMPORADA:
+            if fecha.year not in anios or fecha.month not in meses:
                 previa, racha = None, 0
                 continue
             if previa is None or (fecha - previa).days != 1:
@@ -204,12 +214,13 @@ def estadisticos_observados(estacion, regimen, umbral):
 
 @pytest.mark.parametrize("estacion,regimen,params", grupos_calibrados())
 def test_v6_frente_a_observado(estacion, regimen, params):
-    esp, montos_obs, n_anios = estadisticos_observados(estacion, regimen, UMBRAL_LLUVIA)
-    sim = correr_generador(dict(params, dias=DIAS_TEMPORADA_OBS), n=N_OBS)
+    meses, dias = temporada_de(estacion)
+    esp, montos_obs, n_anios = estadisticos_observados(estacion, regimen, UMBRAL_LLUVIA, meses)
+    sim = correr_generador(dict(params, dias=dias), n=N_OBS)
     muestra = [float(x) for x in sim["muestra"].split(";") if x]
     ks = stats.ks_2samp(montos_obs, muestra)
-    print(f"\n[V6-obs] {estacion}/{regimen} anios={n_anios} dias_lluviosos_obs={len(montos_obs)} "
-          f"umbral={UMBRAL_LLUVIA} mm N_sim={N_OBS}x{DIAS_TEMPORADA_OBS} d params={params}")
+    print(f"\n[V6-obs] {estacion}/{regimen} meses={meses} anios={n_anios} dias_lluviosos_obs={len(montos_obs)} "
+          f"umbral={UMBRAL_LLUVIA} mm N_sim={N_OBS}x{dias} d params={params}")
     print(f"[V6-obs] {'estadistico':28s} {'observado':>12s} {'simulado':>12s} {'error_rel':>10s}")
     fallos = []
     for clave, valor_obs in esp.items():
