@@ -8,11 +8,13 @@ registrada, para que T35 construya bandas de incertidumbre.
 
 Sigue la definicion del proyecto al pie de la letra (corregido tras el
 hallazgo de V6 contra lo observado, que detecto una calibracion desviada):
-solo la temporada enero-abril (D=120 dias) entra a la calibracion, un dia es
-"lluvioso" si precipitacion >= 0.1 mm, y alfa/theta se ajustan con el metodo
-de Thom (1958), no por momentos. El bootstrap remuestrea ANIOS con
-reemplazo (6.2/7.6: "remuestreo bootstrap de los anios de la serie
-historica"), no bloques de dias.
+solo la temporada de cada zona entra a la calibracion (costa norte:
+enero-abril, D=120, definicion 6.2; Lima: junio-setiembre, propuesta
+confirmada por Kevin/Rhamses el 2026-10-15 porque el evento que origina el
+proyecto fue en agosto), un dia es "lluvioso" si precipitacion >= 0.1 mm, y
+alfa/theta se ajustan con el metodo de Thom (1958), no por momentos. El
+bootstrap remuestrea ANIOS con reemplazo (6.2/7.6: "remuestreo bootstrap de
+los anios de la serie historica"), no bloques de dias.
 
 Entradas:
     data/raw/<id_estacion>.csv        (T06/generar_datos_sinteticos.py)
@@ -47,6 +49,7 @@ def hash_estable(texto: str) -> int:
     return zlib.crc32(texto.encode("utf-8"))
 
 RAIZ = Path(__file__).resolve().parents[2]
+INVENTARIO = RAIZ / "data" / "metadata" / "inventario_senamhi.csv"
 RAW_DIR = RAIZ / "data" / "raw"
 REGIMENES = RAIZ / "data" / "processed" / "regimenes.csv"
 PARAMETROS_CSV = RAIZ / "data" / "processed" / "parametros.csv"
@@ -61,20 +64,43 @@ def cargar_regimenes() -> dict[tuple[str, int], str]:
         return {(f_["estacion"], int(f_["anio"])): f_["regimen"] for f_ in csv.DictReader(f)}
 
 
-MESES_TEMPORADA = (1, 2, 3, 4)  # enero-abril, D=120 dias (definicion del proyecto)
+# Ventana por zona (confirmada por Kevin/Rhamses el 2026-10-15): costa norte
+# usa enero-abril (D=120, definicion 6.2); Lima usa junio-setiembre (garua de
+# invierno: el evento que origina el proyecto, Villa El Salvador, fue en
+# agosto 2026). Excepcion: Chosica es un valle andino con lluvia convectiva
+# de verano (huaico de 2017 en marzo), no garua costera -- usa enero-abril
+# igual que costa norte (verificado: 8.1% de dias lluviosos en enero-abril
+# vs 0.25% en junio-setiembre).
+MESES_TEMPORADA_POR_ZONA = {
+    "costa_norte": (1, 2, 3, 4),
+    "lima": (6, 7, 8, 9),
+}
+MESES_TEMPORADA_OVERRIDE = {
+    "lima_chosica": (1, 2, 3, 4),
+}
 UMBRAL_LLUVIA_MM = 0.1  # un dia es "lluvioso" si precipitacion >= 0.1 mm (definicion)
 
 
+def cargar_zonas() -> dict[str, str]:
+    with INVENTARIO.open(newline="", encoding="utf-8") as f:
+        return {f_["id_estacion"]: f_["zona"] for f_ in csv.DictReader(f)}
+
+
+def meses_temporada_de(id_est: str, zona: str) -> tuple[int, ...]:
+    return MESES_TEMPORADA_OVERRIDE.get(id_est, MESES_TEMPORADA_POR_ZONA[zona])
+
+
 def cargar_anios_por_grupo(
-    regimen_por_anio: dict[tuple[str, int], str]
+    regimen_por_anio: dict[tuple[str, int], str], zona_por_estacion: dict[str, str]
 ) -> dict[tuple[str, str], list[tuple[int, list[float | None]]]]:
     """Devuelve, por (estacion, regimen), la lista de (anio, serie_de_la_temporada)
-    -- la temporada enero-abril de cada anio elegible, en orden de fecha. Cada
+    -- la temporada de la zona de cada anio elegible, en orden de fecha. Cada
     anio es la unidad de remuestreo bootstrap (definicion 6.2/7.6: "remuestreo
     bootstrap de los anios de la serie historica")."""
     grupos: dict[tuple[str, str], list[tuple[int, list[float | None]]]] = defaultdict(list)
     for ruta in sorted(RAW_DIR.glob("*.csv")):
         id_est = ruta.stem
+        meses_temporada = meses_temporada_de(id_est, zona_por_estacion.get(id_est, "costa_norte"))
         with ruta.open(newline="", encoding="utf-8") as f:
             filas = list(csv.DictReader(f))
 
@@ -83,8 +109,8 @@ def cargar_anios_por_grupo(
             fecha = fila["fecha"]
             anio = int(fecha[:4])
             mes = int(fecha[5:7])
-            if mes not in MESES_TEMPORADA:
-                continue  # fuera de la temporada enero-abril: no entra a la calibracion
+            if mes not in meses_temporada:
+                continue  # fuera de la temporada de la zona: no entra a la calibracion
             regimen = regimen_por_anio.get((id_est, anio))
             if regimen is None:
                 continue  # anio excluido por T08/T09
@@ -174,7 +200,8 @@ def main() -> int:
         return 2
 
     regimen_por_anio = cargar_regimenes()
-    grupos = cargar_anios_por_grupo(regimen_por_anio)
+    zona_por_estacion = cargar_zonas()
+    grupos = cargar_anios_por_grupo(regimen_por_anio, zona_por_estacion)
 
     PARAMETROS_CSV.parent.mkdir(parents=True, exist_ok=True)
     filas_parametros = []

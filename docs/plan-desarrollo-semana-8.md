@@ -46,6 +46,8 @@ David publica estos contratos como especificación. Los demás pueden desarrolla
 
 V6 contra el modelo (24/24), V7 y CTest no estaban afectadas por ninguno de los cuatro — el núcleo de simulación siempre fue correcto; el error estaba en cómo se preparaban sus parámetros de entrada.
 
+**Decisión de equipo 15/10/2026 (confirmada por Kevin/Rhamses):** la temporada enero–abril no aplica a Lima — esa ventana es la de El Niño costero en la costa norte, pero Lima casi no tiene lluvia ahí. Se usa una ventana por zona: costa norte sigue en enero–abril; **Cañete** usa junio–setiembre (garúa de invierno; el evento que origina el proyecto, Villa El Salvador, fue en agosto 2026). **Chosica** es una excepción dentro de Lima: es un valle andino (Rímac, ~860 m) con lluvia convectiva de verano, no garúa costera — el huaico de 2017 que la hizo conocida fue en marzo. Verificado en los datos: 8,1 % de días lluviosos en enero–abril contra 0,25 % en junio–setiembre. Chosica se queda en enero–abril, igual que la costa norte. Pipeline reejecutado con esta ventana por zona: 4/8 estaciones elegibles, 346 filas estación–año, 16 grupos calibrados.
+
 Reproducir en orden: `importar_senamhi.py <archivo> --id <id>` (uno por estación) → `auditoria_datos.py` → `clasificar_regimenes.py` → `calibrar.py --semilla 20261015`.
 
 ## Comparación solicitada de núcleos
