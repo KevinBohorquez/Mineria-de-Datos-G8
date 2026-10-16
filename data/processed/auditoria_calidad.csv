@@ -1,0 +1,423 @@
+estacion,temporada,dias_esperados,dias_observados,faltantes,pct_faltante,duplicados,negativos,atipicos_gt_150mm,trazas,elegible,motivo
+lambayeque_lambayeque,1929,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1930,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1931,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1932,120,120,0,0.0,0,0,0,1,1,ok
+lambayeque_lambayeque,1933,120,120,0,0.0,0,0,0,2,1,ok
+lambayeque_lambayeque,1934,120,120,0,0.0,0,0,0,3,1,ok
+lambayeque_lambayeque,1935,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1936,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1937,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1938,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1939,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1940,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1941,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1942,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1943,120,120,0,0.0,0,0,0,6,1,ok
+lambayeque_lambayeque,1944,120,59,61,50.83,0,0,0,0,0,faltantes 50.8% >= 10%
+lambayeque_lambayeque,1945,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lambayeque_lambayeque,1946,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lambayeque_lambayeque,1947,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lambayeque_lambayeque,1948,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lambayeque_lambayeque,1949,120,89,31,25.83,0,0,0,8,0,faltantes 25.8% >= 10%
+lambayeque_lambayeque,1950,120,120,0,0.0,0,0,0,2,1,ok
+lambayeque_lambayeque,1951,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1952,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1953,120,120,0,0.0,0,0,0,2,1,ok
+lambayeque_lambayeque,1954,120,120,0,0.0,0,0,0,10,1,ok
+lambayeque_lambayeque,1955,120,120,0,0.0,0,0,0,4,1,ok
+lambayeque_lambayeque,1956,120,120,0,0.0,0,0,0,3,1,ok
+lambayeque_lambayeque,1957,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1958,120,120,0,0.0,0,0,0,5,1,ok
+lambayeque_lambayeque,1959,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1960,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1961,120,120,0,0.0,0,0,0,2,1,ok
+lambayeque_lambayeque,1962,120,120,0,0.0,0,0,0,4,1,ok
+lambayeque_lambayeque,1963,120,120,0,0.0,0,0,0,3,1,ok
+lambayeque_lambayeque,1964,120,89,31,25.83,0,0,0,0,0,faltantes 25.8% >= 10%
+lambayeque_lambayeque,1965,120,90,30,25.0,0,0,0,0,0,faltantes 25.0% >= 10%
+lambayeque_lambayeque,1966,120,120,0,0.0,0,0,0,0,1,ok
+lambayeque_lambayeque,1967,120,120,0,0.0,0,0,0,18,1,ok
+lambayeque_lambayeque,1968,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lambayeque_lambayeque,1969,120,120,0,0.0,0,0,0,18,1,ok
+lambayeque_lambayeque,1970,120,120,0,0.0,0,0,0,17,1,ok
+lambayeque_lambayeque,1971,120,120,0,0.0,0,0,0,25,1,ok
+lambayeque_lambayeque,1972,120,120,0,0.0,0,0,0,14,1,ok
+lambayeque_lambayeque,1973,120,120,0,0.0,0,0,0,25,1,ok
+lambayeque_lambayeque,1974,120,120,0,0.0,0,0,0,12,1,ok
+lambayeque_lambayeque,1975,120,120,0,0.0,0,0,0,20,1,ok
+lambayeque_lambayeque,1976,120,119,1,0.83,0,0,0,15,1,ok
+lambayeque_lambayeque,1977,120,120,0,0.0,0,0,0,4,1,ok
+lambayeque_lambayeque,1978,120,120,0,0.0,0,0,0,10,1,ok
+lambayeque_lambayeque,1979,120,120,0,0.0,0,0,0,12,1,ok
+lambayeque_lambayeque,1980,120,120,0,0.0,0,0,0,3,1,ok
+lambayeque_lambayeque,1981,120,120,0,0.0,0,0,0,17,1,ok
+lambayeque_lambayeque,1982,120,120,0,0.0,0,0,0,10,1,ok
+lambayeque_lambayeque,1983,120,120,0,0.0,0,0,0,22,1,ok
+lambayeque_lambayeque,1984,120,120,0,0.0,0,0,0,19,1,ok
+lambayeque_lambayeque,1985,120,120,0,0.0,0,0,0,15,1,ok
+lambayeque_lambayeque,1986,120,92,28,23.33,0,0,0,16,0,faltantes 23.3% >= 10%
+lambayeque_lambayeque,1987,120,120,0,0.0,0,0,0,26,1,ok
+lambayeque_lambayeque,1988,120,120,0,0.0,0,0,0,22,1,ok
+lambayeque_lambayeque,1989,120,120,0,0.0,0,0,0,24,1,ok
+lambayeque_lambayeque,1990,120,120,0,0.0,0,0,0,16,1,ok
+lambayeque_lambayeque,1991,120,120,0,0.0,0,0,0,7,1,ok
+lambayeque_lambayeque,1992,120,120,0,0.0,0,0,0,7,1,ok
+lambayeque_lambayeque,1993,120,120,0,0.0,0,0,0,12,1,ok
+lambayeque_lambayeque,1994,120,120,0,0.0,0,0,0,12,1,ok
+lambayeque_lambayeque,1995,120,120,0,0.0,0,0,0,10,1,ok
+lambayeque_lambayeque,1996,120,120,0,0.0,0,0,0,15,1,ok
+lambayeque_lambayeque,1997,120,120,0,0.0,0,0,0,22,1,ok
+lambayeque_lambayeque,1998,120,120,0,0.0,0,0,0,13,1,ok
+lambayeque_lambayeque,1999,120,120,0,0.0,0,0,0,14,1,ok
+lambayeque_lambayeque,2000,120,120,0,0.0,0,0,0,15,1,ok
+lambayeque_lambayeque,2001,120,120,0,0.0,0,0,0,9,1,ok
+lambayeque_lambayeque,2002,120,120,0,0.0,0,0,0,6,1,ok
+lambayeque_lambayeque,2003,120,120,0,0.0,0,0,0,10,1,ok
+lambayeque_lambayeque,2004,120,120,0,0.0,0,0,0,6,1,ok
+lambayeque_lambayeque,2005,120,120,0,0.0,0,0,0,15,1,ok
+lambayeque_lambayeque,2006,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lambayeque_lambayeque,2007,120,103,17,14.17,0,0,0,4,0,faltantes 14.2% >= 10%
+lambayeque_lambayeque,2008,120,120,0,0.0,0,0,0,5,1,ok
+lambayeque_lambayeque,2009,120,120,0,0.0,0,0,0,3,1,ok
+lambayeque_lambayeque,2010,120,120,0,0.0,0,0,0,2,1,ok
+lambayeque_lambayeque,2011,120,120,0,0.0,0,0,0,2,1,ok
+lambayeque_lambayeque,2012,120,120,0,0.0,0,0,0,6,1,ok
+lambayeque_lambayeque,2013,120,120,0,0.0,0,0,0,3,1,ok
+lambayeque_lambayeque,2014,120,120,0,0.0,0,0,0,2,1,ok
+lima_canete,1937,120,120,0,0.0,0,0,0,5,1,ok
+lima_canete,1938,120,120,0,0.0,0,0,0,18,1,ok
+lima_canete,1939,120,114,6,5.0,0,0,0,5,1,ok
+lima_canete,1940,120,119,1,0.83,0,0,0,6,1,ok
+lima_canete,1941,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1942,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1943,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1944,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1945,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1946,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1947,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1948,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1949,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1950,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1951,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1952,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1953,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1954,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1955,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1956,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1957,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1958,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1959,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1960,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1961,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1962,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1963,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1964,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1965,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1966,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1967,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1968,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1969,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1970,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1971,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1972,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1973,120,120,0,0.0,0,0,0,2,1,ok
+lima_canete,1974,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1975,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1976,120,31,89,74.17,0,0,0,0,0,faltantes 74.2% >= 10%
+lima_canete,1977,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1978,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1979,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1980,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1981,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1982,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1983,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1984,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1985,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1986,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1987,120,120,0,0.0,0,0,0,1,1,ok
+lima_canete,1988,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1989,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1990,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1991,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_canete,1992,120,30,90,75.0,0,0,0,0,0,faltantes 75.0% >= 10%
+lima_canete,1993,120,120,0,0.0,0,0,0,0,1,ok
+lima_canete,1994,120,120,0,0.0,0,0,0,31,1,ok
+lima_canete,1995,120,120,0,0.0,0,0,0,46,1,ok
+lima_canete,1996,120,120,0,0.0,0,0,0,40,1,ok
+lima_canete,1997,120,120,0,0.0,0,0,0,60,1,ok
+lima_canete,1998,120,120,0,0.0,0,0,0,47,1,ok
+lima_canete,1999,120,120,0,0.0,0,0,0,59,1,ok
+lima_canete,2000,120,120,0,0.0,0,0,0,56,1,ok
+lima_canete,2001,120,120,0,0.0,0,0,0,44,1,ok
+lima_canete,2002,120,120,0,0.0,0,0,0,24,1,ok
+lima_canete,2003,120,120,0,0.0,0,0,0,24,1,ok
+lima_canete,2004,120,120,0,0.0,0,0,0,14,1,ok
+lima_canete,2005,120,120,0,0.0,0,0,0,10,1,ok
+lima_canete,2006,120,120,0,0.0,0,0,0,6,1,ok
+lima_canete,2007,120,120,0,0.0,0,0,0,8,1,ok
+lima_canete,2008,120,120,0,0.0,0,0,0,4,1,ok
+lima_canete,2009,120,61,59,49.17,0,0,0,1,0,faltantes 49.2% >= 10%
+lima_canete,2010,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+lima_chosica,1990,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,1991,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,1992,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,1993,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,1994,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,1995,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,1996,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,1997,120,33,87,72.5,0,0,0,0,0,faltantes 72.5% >= 10%
+lima_chosica,1998,120,89,31,25.83,0,0,0,0,0,faltantes 25.8% >= 10%
+lima_chosica,1999,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2000,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2001,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2002,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2003,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2004,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2005,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2006,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2007,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2008,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2009,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2010,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2011,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2012,120,120,0,0.0,0,0,0,0,1,ok
+lima_chosica,2013,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1964,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1965,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1966,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1967,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1968,120,120,0,0.0,0,0,0,10,1,ok
+piura_bernal,1969,120,120,0,0.0,0,0,0,4,1,ok
+piura_bernal,1970,120,120,0,0.0,0,0,0,7,1,ok
+piura_bernal,1971,120,120,0,0.0,0,0,0,8,1,ok
+piura_bernal,1972,120,120,0,0.0,0,0,0,4,1,ok
+piura_bernal,1973,120,120,0,0.0,0,0,0,3,1,ok
+piura_bernal,1974,120,120,0,0.0,0,0,0,2,1,ok
+piura_bernal,1975,120,120,0,0.0,0,0,0,1,1,ok
+piura_bernal,1976,120,120,0,0.0,0,0,0,5,1,ok
+piura_bernal,1977,120,120,0,0.0,0,0,0,2,1,ok
+piura_bernal,1978,120,120,0,0.0,0,0,0,5,1,ok
+piura_bernal,1979,120,120,0,0.0,0,0,0,3,1,ok
+piura_bernal,1980,120,120,0,0.0,0,0,0,4,1,ok
+piura_bernal,1981,120,120,0,0.0,0,0,0,5,1,ok
+piura_bernal,1982,120,120,0,0.0,0,0,0,4,1,ok
+piura_bernal,1983,120,59,61,50.83,0,0,0,10,0,faltantes 50.8% >= 10%
+piura_bernal,1984,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_bernal,1985,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_bernal,1986,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1987,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1988,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1989,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1990,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1991,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1992,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1993,120,89,31,25.83,0,0,0,0,0,faltantes 25.8% >= 10%
+piura_bernal,1994,120,120,0,0.0,0,0,0,0,1,ok
+piura_bernal,1995,120,120,0,0.0,0,0,0,1,1,ok
+piura_bernal,1996,120,120,0,0.0,0,0,0,2,1,ok
+piura_bernal,1997,120,120,0,0.0,0,0,0,1,1,ok
+piura_bernal,1998,120,120,0,0.0,0,0,0,2,1,ok
+piura_bernal,1999,120,120,0,0.0,0,0,0,5,1,ok
+piura_bernal,2000,120,120,0,0.0,0,0,0,5,1,ok
+piura_bernal,2001,120,120,0,0.0,0,0,0,11,1,ok
+piura_bernal,2002,120,120,0,0.0,0,0,0,11,1,ok
+piura_bernal,2003,120,120,0,0.0,0,0,0,8,1,ok
+piura_bernal,2004,120,120,0,0.0,0,0,0,7,1,ok
+piura_bernal,2005,120,89,31,25.83,0,0,0,7,0,faltantes 25.8% >= 10%
+piura_bernal,2006,120,120,0,0.0,0,0,0,31,1,ok
+piura_bernal,2007,120,119,1,0.83,0,0,0,19,1,ok
+piura_bernal,2008,120,120,0,0.0,0,0,0,18,1,ok
+piura_bernal,2009,120,120,0,0.0,0,0,0,9,1,ok
+piura_bernal,2010,120,58,62,51.67,0,0,0,5,0,faltantes 51.7% >= 10%
+piura_bernal,2011,120,120,0,0.0,0,0,0,11,1,ok
+piura_bernal,2012,120,120,0,0.0,0,0,0,11,1,ok
+piura_bernal,2013,120,120,0,0.0,0,0,0,5,1,ok
+piura_bernal,2014,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1973,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1974,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1975,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1976,120,120,0,0.0,0,0,0,1,1,ok
+piura_chulucanas,1977,120,120,0,0.0,0,0,0,1,1,ok
+piura_chulucanas,1978,120,89,31,25.83,0,0,0,1,0,faltantes 25.8% >= 10%
+piura_chulucanas,1979,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1980,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1981,120,120,0,0.0,0,0,0,1,1,ok
+piura_chulucanas,1982,120,89,31,25.83,0,0,0,1,0,faltantes 25.8% >= 10%
+piura_chulucanas,1983,120,120,0,0.0,0,0,2,0,1,ok
+piura_chulucanas,1984,120,118,2,1.67,0,0,0,0,1,ok
+piura_chulucanas,1985,120,120,0,0.0,0,0,0,1,1,ok
+piura_chulucanas,1986,120,120,0,0.0,0,0,0,2,1,ok
+piura_chulucanas,1987,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1988,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,1989,120,90,30,25.0,0,0,0,0,0,faltantes 25.0% >= 10%
+piura_chulucanas,1990,120,113,7,5.83,0,0,0,0,1,ok
+piura_chulucanas,1991,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_chulucanas,1992,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_chulucanas,1993,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_chulucanas,1994,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_chulucanas,1995,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_chulucanas,1996,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+piura_chulucanas,1997,120,61,59,49.17,0,0,0,2,0,faltantes 49.2% >= 10%
+piura_chulucanas,1998,120,30,90,75.0,0,0,0,0,0,faltantes 75.0% >= 10%
+piura_chulucanas,1999,120,120,0,0.0,0,0,0,2,1,ok
+piura_chulucanas,2000,120,120,0,0.0,0,0,0,1,1,ok
+piura_chulucanas,2001,120,120,0,0.0,0,0,0,2,1,ok
+piura_chulucanas,2002,120,120,0,0.0,0,0,0,1,1,ok
+piura_chulucanas,2003,120,120,0,0.0,0,0,0,3,1,ok
+piura_chulucanas,2004,120,120,0,0.0,0,0,0,4,1,ok
+piura_chulucanas,2005,120,120,0,0.0,0,0,0,4,1,ok
+piura_chulucanas,2006,120,120,0,0.0,0,0,0,4,1,ok
+piura_chulucanas,2007,120,120,0,0.0,0,0,0,3,1,ok
+piura_chulucanas,2008,120,120,0,0.0,0,0,0,1,1,ok
+piura_chulucanas,2009,120,120,0,0.0,0,0,0,7,1,ok
+piura_chulucanas,2010,120,59,61,50.83,0,0,0,4,0,faltantes 50.8% >= 10%
+piura_chulucanas,2011,120,120,0,0.0,0,0,0,2,1,ok
+piura_chulucanas,2012,120,120,0,0.0,0,0,1,1,1,ok
+piura_chulucanas,2013,120,120,0,0.0,0,0,0,0,1,ok
+piura_chulucanas,2014,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,1973,120,120,0,0.0,0,0,0,18,1,ok
+piura_miraflores,1974,120,120,0,0.0,0,0,0,12,1,ok
+piura_miraflores,1975,120,120,0,0.0,0,0,0,12,1,ok
+piura_miraflores,1976,120,120,0,0.0,0,0,0,6,1,ok
+piura_miraflores,1977,120,120,0,0.0,0,0,0,11,1,ok
+piura_miraflores,1978,120,120,0,0.0,0,0,0,11,1,ok
+piura_miraflores,1979,120,120,0,0.0,0,0,0,14,1,ok
+piura_miraflores,1980,120,120,0,0.0,0,0,0,3,1,ok
+piura_miraflores,1981,120,120,0,0.0,0,0,0,2,1,ok
+piura_miraflores,1982,120,120,0,0.0,0,0,0,2,1,ok
+piura_miraflores,1983,120,120,0,0.0,0,0,0,3,1,ok
+piura_miraflores,1984,120,120,0,0.0,0,0,0,16,1,ok
+piura_miraflores,1985,120,120,0,0.0,0,0,0,3,1,ok
+piura_miraflores,1986,120,96,24,20.0,0,0,0,8,0,faltantes 20.0% >= 10%
+piura_miraflores,1987,120,120,0,0.0,0,0,0,16,1,ok
+piura_miraflores,1988,120,120,0,0.0,0,0,0,16,1,ok
+piura_miraflores,1989,120,120,0,0.0,0,0,0,10,1,ok
+piura_miraflores,1990,120,113,7,5.83,0,0,0,9,1,ok
+piura_miraflores,1991,120,120,0,0.0,0,0,0,7,1,ok
+piura_miraflores,1992,120,30,90,75.0,0,0,0,4,0,faltantes 75.0% >= 10%
+piura_miraflores,1993,120,120,0,0.0,0,0,0,12,1,ok
+piura_miraflores,1994,120,120,0,0.0,0,0,0,8,1,ok
+piura_miraflores,1995,120,120,0,0.0,0,0,0,13,1,ok
+piura_miraflores,1996,120,120,0,0.0,0,0,0,10,1,ok
+piura_miraflores,1997,120,61,59,49.17,0,0,0,5,0,faltantes 49.2% >= 10%
+piura_miraflores,1998,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,1999,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,2000,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,2001,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,2002,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,2003,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,2004,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,2005,120,120,0,0.0,0,0,0,1,1,ok
+piura_miraflores,2006,120,120,0,0.0,0,0,0,2,1,ok
+piura_miraflores,2007,120,120,0,0.0,0,0,0,2,1,ok
+piura_miraflores,2008,120,120,0,0.0,0,0,0,2,1,ok
+piura_miraflores,2009,120,120,0,0.0,0,0,0,2,1,ok
+piura_miraflores,2010,120,120,0,0.0,0,0,0,1,1,ok
+piura_miraflores,2011,120,120,0,0.0,0,0,0,4,1,ok
+piura_miraflores,2012,120,120,0,0.0,0,0,0,6,1,ok
+piura_miraflores,2013,120,120,0,0.0,0,0,0,2,1,ok
+piura_miraflores,2014,120,120,0,0.0,0,0,0,0,1,ok
+piura_miraflores,2015,120,120,0,0.0,0,0,0,3,1,ok
+tumbes_eltigre,1964,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1965,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1966,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1967,120,120,0,0.0,0,0,0,16,1,ok
+tumbes_eltigre,1968,120,120,0,0.0,0,0,0,7,1,ok
+tumbes_eltigre,1969,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1970,120,120,0,0.0,0,0,0,3,1,ok
+tumbes_eltigre,1971,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1972,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1973,120,119,1,0.83,0,0,0,0,1,ok
+tumbes_eltigre,1974,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1975,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1976,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1977,120,120,0,0.0,0,0,0,1,1,ok
+tumbes_eltigre,1978,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1979,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1980,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1981,120,120,0,0.0,0,0,0,1,1,ok
+tumbes_eltigre,1982,120,120,0,0.0,0,0,0,1,1,ok
+tumbes_eltigre,1983,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1984,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1985,120,89,31,25.83,0,0,0,2,0,faltantes 25.8% >= 10%
+tumbes_eltigre,1986,120,120,0,0.0,0,0,0,1,1,ok
+tumbes_eltigre,1987,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1988,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1989,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1990,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1991,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+tumbes_eltigre,1992,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+tumbes_eltigre,1993,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1994,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1995,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1996,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1997,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,1998,120,120,0,0.0,0,0,1,0,1,ok
+tumbes_eltigre,1999,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2000,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2001,120,120,0,0.0,0,0,0,1,1,ok
+tumbes_eltigre,2002,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2003,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2004,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2005,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2006,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2007,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2008,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2009,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2010,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2011,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2012,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_eltigre,2013,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1964,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1965,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1966,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1967,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1968,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1969,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1970,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1971,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1972,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1973,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1974,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1975,120,111,9,7.5,0,0,0,0,1,ok
+tumbes_puertopizarro,1976,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1977,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1978,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1979,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1980,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1981,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1982,120,119,1,0.83,0,0,0,0,1,ok
+tumbes_puertopizarro,1983,120,120,0,0.0,0,0,1,0,1,ok
+tumbes_puertopizarro,1984,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1985,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1986,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1987,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1988,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1989,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1990,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1991,120,90,30,25.0,0,0,0,0,0,faltantes 25.0% >= 10%
+tumbes_puertopizarro,1992,120,0,120,100.0,0,0,0,0,0,faltantes 100.0% >= 10%
+tumbes_puertopizarro,1993,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1994,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1995,120,89,31,25.83,0,0,0,0,0,faltantes 25.8% >= 10%
+tumbes_puertopizarro,1996,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1997,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1998,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,1999,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2000,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2001,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2002,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2003,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2004,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2005,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2006,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2007,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2008,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2009,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2010,120,89,31,25.83,0,0,0,0,0,faltantes 25.8% >= 10%
+tumbes_puertopizarro,2011,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2012,120,119,1,0.83,0,0,0,0,1,ok
+tumbes_puertopizarro,2013,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2014,120,120,0,0.0,0,0,0,0,1,ok
+tumbes_puertopizarro,2015,120,90,30,25.0,0,0,0,0,0,faltantes 25.0% >= 10%

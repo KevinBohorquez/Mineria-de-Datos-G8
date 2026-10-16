@@ -1,0 +1,6 @@
+estacion,archivo,region,pct_faltante_ene_abr,temporadas_elegibles,motivo_seleccion
+piura_miraflores,data/raw/piura_miraflores.csv,Piura,3.49,40,menor % faltante ene-abr entre calificadas
+tumbes_puertopizarro,data/raw/tumbes_puertopizarro.csv,Tumbes,4.05,47,menor % faltante ene-abr entre calificadas
+lima_chosica,data/raw/lima_chosica.csv,Lima,4.10,22,menor % faltante ene-abr entre calificadas
+tumbes_eltigre,data/raw/tumbes_eltigre.csv,Tumbes,4.53,47,menor % faltante ene-abr entre calificadas
+piura_bernal,data/raw/piura_bernal.csv,Piura,6.96,45,menor % faltante ene-abr entre calificadas
