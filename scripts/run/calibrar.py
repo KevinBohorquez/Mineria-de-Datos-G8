@@ -6,6 +6,14 @@ auditadas (T08) y la clasificacion de regimen (T09). Genera ademas 100
 remuestreos bootstrap por grupo (estacion x regimen) con una semilla
 registrada, para que T35 construya bandas de incertidumbre.
 
+Sigue la definicion del proyecto al pie de la letra (corregido tras el
+hallazgo de V6 contra lo observado, que detecto una calibracion desviada):
+solo la temporada enero-abril (D=120 dias) entra a la calibracion, un dia es
+"lluvioso" si precipitacion >= 0.1 mm, y alfa/theta se ajustan con el metodo
+de Thom (1958), no por momentos. El bootstrap remuestrea ANIOS con
+reemplazo (6.2/7.6: "remuestreo bootstrap de los anios de la serie
+historica"), no bloques de dias.
+
 Entradas:
     data/raw/<id_estacion>.csv        (T06/generar_datos_sinteticos.py)
     data/processed/auditoria_calidad.csv  (T08, para excluir anios no elegibles)
@@ -44,24 +52,54 @@ def cargar_regimenes() -> dict[tuple[str, int], str]:
         return {(f_["estacion"], int(f_["anio"])): f_["regimen"] for f_ in csv.DictReader(f)}
 
 
-def cargar_dias_por_grupo(regimen_por_anio: dict[tuple[str, int], str]) -> dict[tuple[str, str], list[float | None]]:
-    """Devuelve, por (estacion, regimen), la secuencia diaria en orden de
-    fecha (None = dia faltante, se excluye de las transiciones Markov)."""
-    grupos: dict[tuple[str, str], list[float | None]] = defaultdict(list)
+MESES_TEMPORADA = (1, 2, 3, 4)  # enero-abril, D=120 dias (definicion del proyecto)
+UMBRAL_LLUVIA_MM = 0.1  # un dia es "lluvioso" si precipitacion >= 0.1 mm (definicion)
+
+
+def cargar_anios_por_grupo(
+    regimen_por_anio: dict[tuple[str, int], str]
+) -> dict[tuple[str, str], list[tuple[int, list[float | None]]]]:
+    """Devuelve, por (estacion, regimen), la lista de (anio, serie_de_la_temporada)
+    -- la temporada enero-abril de cada anio elegible, en orden de fecha. Cada
+    anio es la unidad de remuestreo bootstrap (definicion 6.2/7.6: "remuestreo
+    bootstrap de los anios de la serie historica")."""
+    grupos: dict[tuple[str, str], list[tuple[int, list[float | None]]]] = defaultdict(list)
     for ruta in sorted(RAW_DIR.glob("*.csv")):
         id_est = ruta.stem
         with ruta.open(newline="", encoding="utf-8") as f:
-            for fila in csv.DictReader(f):
-                anio = int(fila["fecha"][:4])
-                regimen = regimen_por_anio.get((id_est, anio))
-                if regimen is None:
-                    continue  # anio excluido por T08/T09, no entra a la calibracion
-                valor = fila["precipitacion_mm"]
-                if valor == "" or float(valor) < 0:
-                    grupos[(id_est, regimen)].append(None)
-                else:
-                    grupos[(id_est, regimen)].append(float(valor))
+            filas = list(csv.DictReader(f))
+
+        por_temporada: dict[tuple[int, str], list[tuple[str, float | None]]] = defaultdict(list)
+        for fila in filas:
+            fecha = fila["fecha"]
+            anio = int(fecha[:4])
+            mes = int(fecha[5:7])
+            if mes not in MESES_TEMPORADA:
+                continue  # fuera de la temporada enero-abril: no entra a la calibracion
+            regimen = regimen_por_anio.get((id_est, anio))
+            if regimen is None:
+                continue  # anio excluido por T08/T09
+            valor = fila["precipitacion_mm"]
+            if valor == "" or float(valor) < 0:
+                v = None
+            else:
+                v = float(valor)
+            por_temporada[(anio, regimen)].append((fecha, v))
+
+        for (anio, regimen), dias in sorted(por_temporada.items()):
+            dias.sort(key=lambda t: t[0])
+            grupos[(id_est, regimen)].append((anio, [v for _, v in dias]))
     return grupos
+
+
+def aplanar(anios: list[tuple[int, list[float | None]]]) -> list[float | None]:
+    """Concatena las series de varios anios separandolas con None, para que
+    las transiciones Markov no crucen de un anio a otro."""
+    serie: list[float | None] = []
+    for _, dias in anios:
+        serie.append(None)
+        serie.extend(dias)
+    return serie
 
 
 def estimar_markov(serie: list[float | None]) -> tuple[float, float]:
@@ -71,8 +109,8 @@ def estimar_markov(serie: list[float | None]) -> tuple[float, float]:
     for ayer, hoy in zip(serie, serie[1:]):
         if ayer is None or hoy is None:
             continue
-        seco_ayer = ayer == 0.0
-        llueve_hoy = hoy > 0.0
+        seco_ayer = ayer < UMBRAL_LLUVIA_MM
+        llueve_hoy = hoy >= UMBRAL_LLUVIA_MM
         if seco_ayer:
             c0 += 1
             c01 += int(llueve_hoy)
@@ -85,32 +123,33 @@ def estimar_markov(serie: list[float | None]) -> tuple[float, float]:
 
 
 def estimar_gamma(montos_lluvia: list[float]) -> tuple[float, float]:
-    """Metodo de momentos: media = alfa*theta, varianza = alfa*theta^2."""
+    """Metodo de Thom (1958), aproximacion de maxima verosimilitud estandar
+    para ajustar una gamma a montos de lluvia: con D = ln(media) - media(ln(x)),
+    alfa = (1 + sqrt(1 + 4D/3)) / (4D) y theta = media / alfa."""
     n = len(montos_lluvia)
     if n < 2:
         return 1.0, 1.0
     media = sum(montos_lluvia) / n
-    varianza = sum((x - media) ** 2 for x in montos_lluvia) / (n - 1)
-    if media <= 0 or varianza <= 0:
+    if media <= 0:
         return 1.0, 1.0
-    theta = varianza / media
-    alfa = media / theta
+    log_media = sum(math.log(x) for x in montos_lluvia) / n
+    d_stat = math.log(media) - log_media
+    if d_stat <= 0:
+        # Degenerado (todos los montos casi iguales): sin informacion de forma.
+        return 1.0, media
+    alfa = (1.0 + math.sqrt(1.0 + 4.0 * d_stat / 3.0)) / (4.0 * d_stat)
+    theta = media / alfa
     return alfa, theta
 
 
-def remuestrear(serie: list[float | None], rng: random.Random) -> list[float | None]:
-    """Bootstrap por bloques de 30 dias (preserva algo de la dependencia
-    Markov) en vez de remuestrear dia a dia, que destruiria las transiciones."""
-    bloque = 30
-    dias_validos = [v for v in serie if v is not None]
-    if len(serie) < bloque:
-        return list(serie)
-    n_bloques = max(1, len(serie) // bloque)
-    resultado: list[float | None] = []
-    for _ in range(n_bloques):
-        inicio = rng.randrange(0, len(serie) - bloque + 1)
-        resultado.extend(serie[inicio:inicio + bloque])
-    return resultado or dias_validos
+def remuestrear_anios(
+    anios: list[tuple[int, list[float | None]]], rng: random.Random
+) -> list[float | None]:
+    """Bootstrap de anios (definicion 6.2/7.6): remuestrea los anios
+    disponibles CON REEMPLAZO, mismo tamanio de muestra, y concatena sus
+    series de temporada (separadas por None) para recalibrar sobre eso."""
+    elegidos = [anios[rng.randrange(0, len(anios))] for _ in range(len(anios))]
+    return aplanar(elegidos)
 
 
 def main() -> int:
@@ -126,25 +165,27 @@ def main() -> int:
         return 2
 
     regimen_por_anio = cargar_regimenes()
-    grupos = cargar_dias_por_grupo(regimen_por_anio)
+    grupos = cargar_anios_por_grupo(regimen_por_anio)
 
     PARAMETROS_CSV.parent.mkdir(parents=True, exist_ok=True)
     filas_parametros = []
     filas_bootstrap = []
     lineas_log = []
 
-    for (id_est, regimen), serie in sorted(grupos.items()):
+    for (id_est, regimen), anios in sorted(grupos.items()):
+        serie = aplanar(anios)
         p01, p11 = estimar_markov(serie)
-        montos_lluvia = [v for v in serie if v is not None and v > 0.0]
+        montos_lluvia = [v for v in serie if v is not None and v >= UMBRAL_LLUVIA_MM]
         alfa, theta = estimar_gamma(montos_lluvia)
         n_dias = len(serie)
         n_faltantes = sum(1 for v in serie if v is None)
+        n_anios = len(anios)
 
         finito = all(math.isfinite(x) for x in (p01, p11, alfa, theta))
         en_rango = 0.0 <= p01 <= 1.0 and 0.0 <= p11 <= 1.0 and alfa > 0 and theta > 0
         estado = "OK" if finito and en_rango else "FALLA"
         lineas_log.append(
-            f"[{id_est}/{regimen}] n_dias={n_dias} faltantes={n_faltantes} "
+            f"[{id_est}/{regimen}] n_anios={n_anios} n_dias={n_dias} faltantes={n_faltantes} "
             f"p01={p01:.4f} p11={p11:.4f} alfa={alfa:.4f} theta={theta:.4f} estado={estado}"
         )
 
@@ -152,6 +193,7 @@ def main() -> int:
             {
                 "estacion": id_est,
                 "regimen": regimen,
+                "n_anios": n_anios,
                 "n_dias": n_dias,
                 "n_dias_lluvia": len(montos_lluvia),
                 "p01": round(p01, 6),
@@ -166,9 +208,9 @@ def main() -> int:
 
         rng = random.Random(args.semilla ^ hash((id_est, regimen)) & 0xFFFFFFFF)
         for replica in range(1, N_BOOTSTRAP + 1):
-            muestra = remuestrear(serie, rng)
+            muestra = remuestrear_anios(anios, rng)
             p01_b, p11_b = estimar_markov(muestra)
-            montos_b = [v for v in muestra if v is not None and v > 0.0]
+            montos_b = [v for v in muestra if v is not None and v >= UMBRAL_LLUVIA_MM]
             alfa_b, theta_b = estimar_gamma(montos_b)
             filas_bootstrap.append(
                 {
@@ -185,7 +227,7 @@ def main() -> int:
 
     with PARAMETROS_CSV.open("w", newline="", encoding="utf-8") as out:
         campos = [
-            "estacion", "regimen", "n_dias", "n_dias_lluvia", "p01", "p11", "alfa", "theta",
+            "estacion", "regimen", "n_anios", "n_dias", "n_dias_lluvia", "p01", "p11", "alfa", "theta",
             "semilla_remuestreo", "n_bootstrap", "estado_validacion",
         ]
         escritor = csv.DictWriter(out, fieldnames=campos)

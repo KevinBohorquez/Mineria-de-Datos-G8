@@ -1,15 +1,22 @@
 """T09 | Responsable: Angela.
 
 Clasifica cada combinacion estacion/anio elegible (T08) como regimen "normal"
-o "el_nino" usando una lista de referencia tipo ENFEN/ONI (ver nota de fuente
-abajo) y la escribe en data/processed/regimenes.csv.
+o "el_nino" usando la definicion operacional oficial del ENFEN (2012), sobre
+el Indice Costero El Nino (ICEN) real descargado de met.igp.gob.pe, y la
+escribe en data/processed/regimenes.csv.
 
-Regla de clasificacion (fija y reproducible): un anio es "el_nino" si su
-diciembre-enero-febrero quedo dentro de un episodio El Nino segun el indice
-ONI (umbral +0.5 o superior) o si ENFEN declaro El Nino costero en ese anio;
-en caso contrario es "normal". Anios ambiguos (el evento cruza el cambio de
-anio) se asignan al anio en que ocurre la temporada de lluvias de la costa
-norte de Peru (enero-abril), que es la ventana que usa este proyecto.
+Regla (ENFEN, Nota Tecnica "Definicion operacional de los eventos El Nino y
+La Nina...", Lima, 9/4/2012, tabla 1 y seccion 3):
+    - Categoria mensual "Calida" si ICEN > 0.4.
+    - "Evento El Nino en la costa de Peru" = racha de >= 3 meses consecutivos
+      en categoria Calida.
+Un anio queda clasificado "el_nino" si alguno de sus meses de la temporada
+enero-abril (D=120, ver docs/definicion-proyecto.docx 6.2) cae dentro de un
+evento El Nino asi identificado; en caso contrario, "normal".
+
+Fuente de datos: data/external/icen.txt (ICEN mensual 1950-2024, ENFEN 2024,
+descargado el 2026-10-15 de http://met.igp.gob.pe/datos/ICEN.txt). Umbral
+oficial: http://met.igp.gob.pe/elnino/enfen/ICEN-Nota_Tecnica.pdf
 
 Uso:
     python scripts/run/clasificar_regimenes.py
@@ -23,15 +30,60 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[2]
 AUDITORIA = RAIZ / "data" / "processed" / "auditoria_calidad.csv"
+ICEN = RAIZ / "data" / "external" / "icen.txt"
 SALIDA = RAIZ / "data" / "processed" / "regimenes.csv"
 
-# Misma lista que generar_datos_sinteticos.py (debe mantenerse igual: es la
-# "verdad" con la que se generaron los datos sinteticos y la regla con la que
-# T10 debe recuperar parametros distintos por regimen).
-ANIOS_EL_NINO = {
-    1994, 1997, 1998, 2002, 2004, 2006, 2009, 2014, 2015, 2016, 2017, 2018, 2023, 2024,
-}
-FUENTE = "ENFEN/ONI (umbral DJF >= 0.5), referencia hipotetica consolidada para este proyecto el 2026-10-01"
+MESES_TEMPORADA = (1, 2, 3, 4)
+UMBRAL_CALIDA = 0.4
+MIN_MESES_EVENTO = 3
+FUENTE = (
+    "ENFEN (2012), Definicion operacional de los eventos El Nino y La Nina en la costa "
+    "del Peru (ICEN > 0.4 durante >= 3 meses consecutivos); ICEN mensual 1950-2024 de "
+    "met.igp.gob.pe/datos/ICEN.txt, consultado 2026-10-15"
+)
+
+
+def cargar_icen() -> dict[tuple[int, int], float]:
+    valores: dict[tuple[int, int], float] = {}
+    with ICEN.open(encoding="utf-8") as f:
+        for linea in f:
+            linea = linea.strip()
+            if not linea or linea.startswith("%"):
+                continue
+            anio_s, mes_s, icen_s = linea.split()
+            valores[(int(anio_s), int(mes_s))] = float(icen_s)
+    return valores
+
+
+def meses_en_evento_el_nino(icen: dict[tuple[int, int], float]) -> set[tuple[int, int]]:
+    """Aplica la regla ENFEN: racha de >= 3 meses consecutivos con ICEN > 0.4."""
+    meses_ordenados = sorted(icen)
+    en_evento: set[tuple[int, int]] = set()
+    racha: list[tuple[int, int]] = []
+
+    def cerrar_racha():
+        if len(racha) >= MIN_MESES_EVENTO:
+            en_evento.update(racha)
+
+    anterior = None
+    for clave in meses_ordenados:
+        anio, mes = clave
+        consecutivo = anterior is not None and (
+            (anio == anterior[0] and mes == anterior[1] + 1)
+            or (anio == anterior[0] + 1 and anterior[1] == 12 and mes == 1)
+        )
+        if icen[clave] > UMBRAL_CALIDA:
+            if consecutivo and racha:
+                racha.append(clave)
+            else:
+                cerrar_racha()
+                racha = [clave]
+        else:
+            cerrar_racha()
+            racha = []
+        anterior = clave
+    cerrar_racha()
+    return en_evento
 
 
 def main() -> int:
@@ -41,6 +93,12 @@ def main() -> int:
     if not AUDITORIA.exists():
         print(f"No existe {AUDITORIA}; ejecutar scripts/run/auditoria_datos.py primero.")
         return 2
+    if not ICEN.exists():
+        print(f"No existe {ICEN}; descargar met.igp.gob.pe/datos/ICEN.txt primero.")
+        return 2
+
+    icen = cargar_icen()
+    meses_nino = meses_en_evento_el_nino(icen)
 
     with AUDITORIA.open(newline="", encoding="utf-8") as f:
         filas = list(csv.DictReader(f))
@@ -50,13 +108,14 @@ def main() -> int:
         if fila["elegible"] != "True":
             continue
         anio = int(fila["anio"])
-        regimen = "el_nino" if anio in ANIOS_EL_NINO else "normal"
+        es_nino = any((anio, mes) in meses_nino for mes in MESES_TEMPORADA)
+        regimen = "el_nino" if es_nino else "normal"
         salida_filas.append(
             {
                 "estacion": fila["estacion"],
                 "anio": anio,
                 "regimen": regimen,
-                "regla": "anio in ANIOS_EL_NINO (ONI DJF >= 0.5 o El Nino costero declarado)",
+                "regla": "ICEN > 0.4 en >= 3 meses consecutivos (ENFEN 2012), evaluado en enero-abril",
                 "fuente": FUENTE,
             }
         )

@@ -1,9 +1,10 @@
 """T08 | Responsable: Angela.
 
 Audita faltantes, duplicados, valores negativos y atipicos de cada serie
-diaria generada en data/raw/*.csv (ver generar_datos_sinteticos.py) y aplica
-la regla de exclusion de la definicion: una estacion/anio es elegible si tiene
-menos de 10% de dias faltantes.
+diaria, restringido a la temporada enero-abril (D=120 dias, definicion 6.2),
+y aplica la regla de exclusion tal cual el documento de definicion (7.6):
+una estacion/anio es elegible si tiene menos de 10% de dias faltantes EN LA
+TEMPORADA (no en el anio completo).
 
 Salidas:
     data/processed/auditoria_calidad.csv  (una fila por estacion/anio)
@@ -32,22 +33,28 @@ SALIDA_MD = RAIZ / "docs" / "auditoria-datos.md"
 
 UMBRAL_FALTANTES = 0.10
 UMBRAL_ATIPICO_MM = 150.0  # mm en un dia; por encima se marca para revision manual, no se descarta.
+MESES_TEMPORADA = (1, 2, 3, 4)  # enero-abril, D=120 dias (definicion del proyecto, 6.2)
 
 
-def dias_del_anio(anio: int) -> int:
-    return 366 if (anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)) else 365
+def dias_temporada(anio: int) -> int:
+    """Dias de enero a abril (la 'temporada' que define el proyecto), 120 o
+    121 en anio bisiesto por el 29 de febrero."""
+    bisiesto = anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)
+    return 31 + (29 if bisiesto else 28) + 31 + 30
 
 
 def auditar_estacion(id_est: str, ruta: Path) -> list[dict]:
     with ruta.open(newline="", encoding="utf-8") as f:
-        filas = list(csv.DictReader(f))
+        filas_crudas = list(csv.DictReader(f))
 
     por_anio: dict[int, list[dict]] = defaultdict(list)
     vistos: dict[tuple[int, str], int] = defaultdict(int)
     duplicados_por_anio: dict[int, int] = defaultdict(int)
 
-    for fila in filas:
+    for fila in filas_crudas:
         fecha = dt.date.fromisoformat(fila["fecha"])
+        if fecha.month not in MESES_TEMPORADA:
+            continue  # fuera de la temporada enero-abril: no entra a la auditoria (6.2 / 7.6)
         clave = (fecha.year, fila["fecha"])
         vistos[clave] += 1
         if vistos[clave] > 1:
@@ -57,7 +64,7 @@ def auditar_estacion(id_est: str, ruta: Path) -> list[dict]:
     resultados = []
     for anio in sorted(por_anio):
         filas_anio = por_anio[anio]
-        esperados = dias_del_anio(anio)
+        esperados = dias_temporada(anio)
         faltantes = sum(1 for r in filas_anio if r["precipitacion_mm"] == "")
         negativos = sum(1 for r in filas_anio if r["precipitacion_mm"] not in ("",) and float(r["precipitacion_mm"]) < 0)
         atipicos = sum(
@@ -153,7 +160,8 @@ def main() -> int:
         "queda como respaldo si alguna estacion real deja de estar disponible.\n\n"
         "## Regla de exclusion\n\n"
         f"Una combinacion estacion/anio es elegible si tiene menos de {UMBRAL_FALTANTES*100:.0f}% "
-        "de dias faltantes y no tiene valores negativos sin corregir. Una estacion completa es "
+        "de dias faltantes **en la temporada enero-abril** (120/121 dias, no en el anio completo; "
+        "definicion 6.2 y 7.6) y no tiene valores negativos sin corregir. Una estacion completa es "
         "elegible si al menos el 90% de sus anios cumplen la regla anterior.\n\n"
         "## Resultado por estacion\n\n"
         "| ID | Estacion | Anios auditados | Anios elegibles | % faltantes promedio | Estacion elegible |\n"
