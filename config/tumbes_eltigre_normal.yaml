@@ -1,0 +1,15 @@
+# T10 | Configuración calibrada: tumbes_eltigre / normal.
+# Generado por scripts/run/generar_configs.py desde data/processed/parametros.csv (commit 96015d8).
+# Claves no calibradas copiadas de config/sintetico.yaml.
+estacion: tumbes_eltigre
+regimen: normal
+config_id: 6
+semilla: 20261015
+n: 1000000
+dias: 120
+p01: 0.2244720856
+p11: 0.5917721519
+alfa: 0.5738294856
+theta: 12.7263085561
+capacidad: 6
+umbral: 50

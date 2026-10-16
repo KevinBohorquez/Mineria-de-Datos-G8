@@ -1,0 +1,15 @@
+# T10 | Configuración calibrada: tumbes_puertopizarro / normal.
+# Generado por scripts/run/generar_configs.py desde data/processed/parametros.csv (commit 96015d8).
+# Claves no calibradas copiadas de config/sintetico.yaml.
+estacion: tumbes_puertopizarro
+regimen: normal
+config_id: 8
+semilla: 20261015
+n: 1000000
+dias: 120
+p01: 0.1606595995
+p11: 0.3804744526
+alfa: 0.7394538572
+theta: 11.0771162456
+capacidad: 6
+umbral: 50

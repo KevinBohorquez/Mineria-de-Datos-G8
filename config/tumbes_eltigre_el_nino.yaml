@@ -1,0 +1,16 @@
+# T10 | Configuración calibrada: tumbes_eltigre / el_nino.
+# Generado por scripts/run/generar_configs.py desde data/processed/parametros.csv (commit 96015d8).
+# Claves no calibradas copiadas de config/sintetico.yaml.
+# ADVERTENCIA: muestra_pequena (n_temporadas = 2).
+estacion: tumbes_eltigre
+regimen: el_nino
+config_id: 5
+semilla: 20261015
+n: 1000000
+dias: 120
+p01: 0.6964285714
+p11: 0.7802197802
+alfa: 0.6936682231
+theta: 28.2382520774
+capacidad: 6
+umbral: 50

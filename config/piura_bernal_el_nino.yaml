@@ -1,0 +1,16 @@
+# T10 | Configuración calibrada: piura_bernal / el_nino.
+# Generado por scripts/run/generar_configs.py desde data/processed/parametros.csv (commit 96015d8).
+# Claves no calibradas copiadas de config/sintetico.yaml.
+# ADVERTENCIA: muestra_insuficiente, muestra_pequena (n_temporadas = 1).
+estacion: piura_bernal
+regimen: el_nino
+config_id: 1
+semilla: 20261015
+n: 1000000
+dias: 120
+p01: 0.4137931034
+p11: 0.606557377
+alfa: 0.5417900062
+theta: 36.2883322171
+capacidad: 6
+umbral: 50
