@@ -1,14 +1,14 @@
-"""T06/T08 (apoyo): genera series diarias sinteticas que representan, para este
-proyecto academico, la descarga cruda de SENAMHI listada en
-data/metadata/inventario_senamhi.csv.
+"""T06/T08 (respaldo): genera series diarias sinteticas que imitan la descarga
+de SENAMHI, para usar solo si alguna estacion real deja de estar disponible.
 
-No hay acceso a la base real de SENAMHI desde este entorno, asi que la serie se
-simula con un proceso Markov humedo/seco + monto gamma, igual al modelo del
-proyecto, usando parametros "verdaderos" distintos por regimen (normal vs El
-Nino) y una semilla fija por estacion. Se inyectan deliberadamente huecos,
-duplicados y un par de valores negativos para que T08 (auditoria) tenga algo
-real que detectar. Resultado: data/raw/<id_estacion>.csv (fuera de Git, ver
-.gitignore) con columnas fecha,precipitacion_mm.
+Las 8 estaciones de data/metadata/inventario_senamhi.csv ya se descargaron
+reales del portal de SENAMHI (ver importar_senamhi.py); este generador no se
+usa en la corrida vigente. Simula un proceso Markov humedo/seco + monto gamma,
+igual al modelo del proyecto, con parametros "verdaderos" distintos por
+regimen (normal vs El Nino) y una semilla fija por estacion, e inyecta huecos,
+duplicados y valores negativos deliberados para probar T08. Resultado:
+data/raw/<id_estacion>.csv (fuera de Git, ver .gitignore) con columnas
+fecha,precipitacion_mm.
 
 Uso:
     python scripts/run/generar_datos_sinteticos.py

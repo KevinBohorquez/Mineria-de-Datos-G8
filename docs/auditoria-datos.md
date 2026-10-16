@@ -2,7 +2,7 @@
 
 **Responsable:** Angela · **Revisor:** David
 
-Series generadas de forma sintetica (ver [`generar_datos_sinteticos.py`](../scripts/run/generar_datos_sinteticos.py)) porque este entorno no tiene acceso a la descarga real de SENAMHI; el procedimiento, las reglas y el script son los mismos que se aplicarian a la serie real cuando este disponible. No se presentan estas cifras como mediciones hidrologicas reales.
+Series reales descargadas del portal oficial de SENAMHI (cuenta registrada) para las 8 estaciones de [`inventario_senamhi.csv`](../data/metadata/inventario_senamhi.csv) (criterio de seleccion en [`criterio-seleccion-estaciones.md`](criterio-seleccion-estaciones.md)), convertidas con [`importar_senamhi.py`](../scripts/run/importar_senamhi.py). El generador sintetico ([`generar_datos_sinteticos.py`](../scripts/run/generar_datos_sinteticos.py)) queda como respaldo si alguna estacion real deja de estar disponible.
 
 ## Regla de exclusion
 
@@ -12,13 +12,16 @@ Una combinacion estacion/anio es elegible si tiene menos de 10% de dias faltante
 
 | ID | Estacion | Anios auditados | Anios elegibles | % faltantes promedio | Estacion elegible |
 | --- | --- | --- | --- | --- | --- |
-| 000401 | Piura | 30 | 29 | 2.99% | Si |
-| 000402 | Chulucanas | 27 | 26 | 2.99% | Si |
-| 000601 | Tumbes | 32 | 31 | 3.00% | Si |
-| 000301 | Chiclayo | 25 | 24 | 2.99% | Si |
-| 000701 | Talara | 29 | 28 | 2.99% | Si |
+| piura_miraflores | Miraflores | 43 | 40 | 3.88% | Si |
+| piura_chulucanas | Chulucanas | 43 | 32 | 18.29% | No |
+| piura_bernal | Bernal | 52 | 48 | 5.80% | Si |
+| tumbes_puertopizarro | Puerto Pizarro | 53 | 50 | 2.28% | Si |
+| tumbes_eltigre | El Tigre | 51 | 47 | 5.90% | Si |
+| lambayeque_lambayeque | Lambayeque | 87 | 77 | 9.07% | No |
+| lima_chosica | Chosica | 26 | 25 | 4.74% | Si |
+| lima_canete | Cañete | 75 | 34 | 44.78% | No |
 
-**Estaciones elegibles: 5 de 5** (criterio de T08 exige >= 3). Cumple.
+**Estaciones elegibles: 5 de 8** (criterio de T08 exige >= 3). Cumple.
 
 ## Reproducir
 
