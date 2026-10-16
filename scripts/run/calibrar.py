@@ -6,6 +6,12 @@ auditadas (T08) y la clasificacion de regimen (T09). Genera ademas 100
 remuestreos bootstrap por grupo (estacion x regimen) con una semilla
 registrada, para que T35 construya bandas de incertidumbre.
 
+Sigue la definicion del proyecto al pie de la letra (corregido tras el
+hallazgo de V6 contra lo observado, que detecto una calibracion desviada):
+solo la temporada enero-abril (D=120 dias) entra a la calibracion, un dia es
+"lluvioso" si precipitacion >= 0.1 mm, y alfa/theta se ajustan con el metodo
+de Thom (1958), no por momentos.
+
 Entradas:
     data/raw/<id_estacion>.csv        (T06/generar_datos_sinteticos.py)
     data/processed/auditoria_calidad.csv  (T08, para excluir anios no elegibles)
@@ -44,23 +50,43 @@ def cargar_regimenes() -> dict[tuple[str, int], str]:
         return {(f_["estacion"], int(f_["anio"])): f_["regimen"] for f_ in csv.DictReader(f)}
 
 
+MESES_TEMPORADA = (1, 2, 3, 4)  # enero-abril, D=120 dias (definicion del proyecto)
+UMBRAL_LLUVIA_MM = 0.1  # un dia es "lluvioso" si precipitacion >= 0.1 mm (definicion)
+
+
 def cargar_dias_por_grupo(regimen_por_anio: dict[tuple[str, int], str]) -> dict[tuple[str, str], list[float | None]]:
-    """Devuelve, por (estacion, regimen), la secuencia diaria en orden de
-    fecha (None = dia faltante, se excluye de las transiciones Markov)."""
+    """Devuelve, por (estacion, regimen), la secuencia diaria de la temporada
+    enero-abril en orden de fecha. Cada temporada (anio) se separa de la
+    siguiente con un None, para que las transiciones Markov no crucen de una
+    temporada a otra (ni de un anio a otro, ni de abril a enero del
+    siguiente). None tambien marca un dia faltante dentro de la temporada."""
     grupos: dict[tuple[str, str], list[float | None]] = defaultdict(list)
     for ruta in sorted(RAW_DIR.glob("*.csv")):
         id_est = ruta.stem
         with ruta.open(newline="", encoding="utf-8") as f:
-            for fila in csv.DictReader(f):
-                anio = int(fila["fecha"][:4])
-                regimen = regimen_por_anio.get((id_est, anio))
-                if regimen is None:
-                    continue  # anio excluido por T08/T09, no entra a la calibracion
-                valor = fila["precipitacion_mm"]
-                if valor == "" or float(valor) < 0:
-                    grupos[(id_est, regimen)].append(None)
-                else:
-                    grupos[(id_est, regimen)].append(float(valor))
+            filas = list(csv.DictReader(f))
+
+        por_temporada: dict[tuple[int, str], list[tuple[str, float | None]]] = defaultdict(list)
+        for fila in filas:
+            fecha = fila["fecha"]
+            anio = int(fecha[:4])
+            mes = int(fecha[5:7])
+            if mes not in MESES_TEMPORADA:
+                continue  # fuera de la temporada enero-abril: no entra a la calibracion
+            regimen = regimen_por_anio.get((id_est, anio))
+            if regimen is None:
+                continue  # anio excluido por T08/T09
+            valor = fila["precipitacion_mm"]
+            if valor == "" or float(valor) < 0:
+                v = None
+            else:
+                v = float(valor)
+            por_temporada[(anio, regimen)].append((fecha, v))
+
+        for (anio, regimen), dias in sorted(por_temporada.items()):
+            dias.sort(key=lambda t: t[0])
+            grupos[(id_est, regimen)].append(None)  # separador de temporada
+            grupos[(id_est, regimen)].extend(v for _, v in dias)
     return grupos
 
 
@@ -71,8 +97,8 @@ def estimar_markov(serie: list[float | None]) -> tuple[float, float]:
     for ayer, hoy in zip(serie, serie[1:]):
         if ayer is None or hoy is None:
             continue
-        seco_ayer = ayer == 0.0
-        llueve_hoy = hoy > 0.0
+        seco_ayer = ayer < UMBRAL_LLUVIA_MM
+        llueve_hoy = hoy >= UMBRAL_LLUVIA_MM
         if seco_ayer:
             c0 += 1
             c01 += int(llueve_hoy)
@@ -85,16 +111,22 @@ def estimar_markov(serie: list[float | None]) -> tuple[float, float]:
 
 
 def estimar_gamma(montos_lluvia: list[float]) -> tuple[float, float]:
-    """Metodo de momentos: media = alfa*theta, varianza = alfa*theta^2."""
+    """Metodo de Thom (1958), aproximacion de maxima verosimilitud estandar
+    para ajustar una gamma a montos de lluvia: con D = ln(media) - media(ln(x)),
+    alfa = (1 + sqrt(1 + 4D/3)) / (4D) y theta = media / alfa."""
     n = len(montos_lluvia)
     if n < 2:
         return 1.0, 1.0
     media = sum(montos_lluvia) / n
-    varianza = sum((x - media) ** 2 for x in montos_lluvia) / (n - 1)
-    if media <= 0 or varianza <= 0:
+    if media <= 0:
         return 1.0, 1.0
-    theta = varianza / media
-    alfa = media / theta
+    log_media = sum(math.log(x) for x in montos_lluvia) / n
+    d_stat = math.log(media) - log_media
+    if d_stat <= 0:
+        # Degenerado (todos los montos casi iguales): sin informacion de forma.
+        return 1.0, media
+    alfa = (1.0 + math.sqrt(1.0 + 4.0 * d_stat / 3.0)) / (4.0 * d_stat)
+    theta = media / alfa
     return alfa, theta
 
 
@@ -135,7 +167,7 @@ def main() -> int:
 
     for (id_est, regimen), serie in sorted(grupos.items()):
         p01, p11 = estimar_markov(serie)
-        montos_lluvia = [v for v in serie if v is not None and v > 0.0]
+        montos_lluvia = [v for v in serie if v is not None and v >= UMBRAL_LLUVIA_MM]
         alfa, theta = estimar_gamma(montos_lluvia)
         n_dias = len(serie)
         n_faltantes = sum(1 for v in serie if v is None)
@@ -168,7 +200,7 @@ def main() -> int:
         for replica in range(1, N_BOOTSTRAP + 1):
             muestra = remuestrear(serie, rng)
             p01_b, p11_b = estimar_markov(muestra)
-            montos_b = [v for v in muestra if v is not None and v > 0.0]
+            montos_b = [v for v in muestra if v is not None and v >= UMBRAL_LLUVIA_MM]
             alfa_b, theta_b = estimar_gamma(montos_b)
             filas_bootstrap.append(
                 {

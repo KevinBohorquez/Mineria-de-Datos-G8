@@ -38,6 +38,8 @@ David publica estos contratos como especificación. Los demás pueden desarrolla
 - **T09:** `data/processed/regimenes.csv` (generado por [`clasificar_regimenes.py`](../scripts/run/clasificar_regimenes.py)), 353 filas estación–año con la regla ONI/ENFEN (DJF ≥ 0.5) y la fuente anotada en cada fila.
 - **T10:** `data/processed/parametros.csv` y `bootstrap_parametros.csv` (generados por [`calibrar.py`](../scripts/run/calibrar.py) con `--semilla 20261015`): 16 grupos estación×régimen, 100 réplicas bootstrap por grupo (bloques de 30 días, para no romper la dependencia Markov), validación de rango y finitud registrada en `data/processed/calibracion_log.txt`.
 
+**Corrección 15/10/2026 (hallazgo de V6 contra lo observado, Ashley):** la primera versión de T10 calibraba con el año completo, contaba como "lluvioso" cualquier valor > 0 mm y ajustaba alfa/theta por el método de momentos. Eso desviaba la lluvia simulada 58–84 % por debajo de la observada. Se corrigió para seguir la definición al pie de la letra: solo la temporada enero–abril (D = 120 días) entra a la calibración, un día es lluvioso si precipitación ≥ 0,1 mm, y alfa/theta se ajustan con el método de Thom (1958). V6 contra el modelo (24/24) y V7 no estaban afectadas — el error estaba en los datos de entrada a la calibración, no en el núcleo de simulación.
+
 Reproducir en orden: `importar_senamhi.py <archivo> --id <id>` (uno por estación) → `auditoria_datos.py` → `clasificar_regimenes.py` → `calibrar.py --semilla 20261015`.
 
 ## Comparación solicitada de núcleos
