@@ -34,8 +34,17 @@ import argparse
 import csv
 import math
 import random
+import zlib
 from collections import defaultdict
 from pathlib import Path
+
+
+def hash_estable(texto: str) -> int:
+    """hash() de Python varia entre ejecuciones (PYTHONHASHSEED aleatorio por
+    proceso): con la misma --semilla, dos corridas del script darian
+    bootstrap_parametros.csv distintos. crc32 es determinista entre
+    ejecuciones, maquinas y versiones de Python."""
+    return zlib.crc32(texto.encode("utf-8"))
 
 RAIZ = Path(__file__).resolve().parents[2]
 RAW_DIR = RAIZ / "data" / "raw"
@@ -206,7 +215,7 @@ def main() -> int:
             }
         )
 
-        rng = random.Random(args.semilla ^ hash((id_est, regimen)) & 0xFFFFFFFF)
+        rng = random.Random(args.semilla ^ hash_estable(f"{id_est}/{regimen}"))
         for replica in range(1, N_BOOTSTRAP + 1):
             muestra = remuestrear_anios(anios, rng)
             p01_b, p11_b = estimar_markov(muestra)
