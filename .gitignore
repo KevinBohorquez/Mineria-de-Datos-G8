@@ -22,3 +22,5 @@ __pycache__/
 .venv/
 ~$*.docx
 ~$*.xlsx
+!/results/figures/openmp_*.png
+!/results/figures/openmp_*.svg
