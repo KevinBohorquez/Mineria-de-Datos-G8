@@ -5,8 +5,11 @@
 /build/
 /data/raw/*
 !/data/raw/.gitkeep
+# T06: las series SENAMHI (LF) y las tablas procesadas en CSV se versionan.
+!/data/raw/*.csv
 /data/processed/*
 !/data/processed/.gitkeep
+!/data/processed/*.csv
 /results/raw/*
 !/results/raw/.gitkeep
 /results/processed/*

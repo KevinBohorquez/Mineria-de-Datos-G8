@@ -1,0 +1,9 @@
+estacion,archivo,region,fecha_inicio,fecha_fin,n_dias,n_faltantes,pct_faltante_total,pct_faltante_ene_abr,temporadas_ene_abr,max_mm,fecha_max,n_trazas
+lambayeque_lambayeque,data/raw/lambayeque_lambayeque.csv,Lambayeque,1928-11-02,2014-07-31,31318,2882,9.20,8.91,86,71.30,1998-02-14,1411
+lima_canete,data/raw/lima_canete.csv,Lima,1936-07-01,2010-07-31,27059,12267,45.33,47.35,74,19.50,2006-02-04,1612
+lima_chosica,data/raw/lima_chosica.csv,Lima,1989-12-01,2014-01-31,8828,450,5.10,4.10,24,37.00,2012-04-04,0
+piura_bernal,data/raw/piura_bernal.csv,Piura,1963-11-01,2014-06-30,18505,1101,5.95,6.96,51,123.20,1998-02-18,657
+piura_chulucanas,data/raw/piura_chulucanas.csv,Piura,1972-01-02,2014-06-30,15521,2873,18.51,20.46,42,202.50,1983-01-26,101
+piura_miraflores,data/raw/piura_miraflores.csv,Piura,1973-01-01,2015-10-31,15644,609,3.89,3.49,43,100.30,1992-04-12,522
+tumbes_eltigre,data/raw/tumbes_eltigre.csv,Tumbes,1963-09-01,2013-12-31,18385,1100,5.98,4.53,50,220.00,1998-02-08,167
+tumbes_puertopizarro,data/raw/tumbes_puertopizarro.csv,Tumbes,1963-09-01,2015-10-31,19054,442,2.32,4.05,52,166.00,1983-03-24,38
