@@ -70,7 +70,7 @@ def test_v5_sin_carreras_con_archer(binario):
             r = subprocess.run([str(binario), "--config", str(CONFIG), "--n", "4000", "--hilos", str(hilos),
                                 "--schedule", schedule, "--silencioso"],
                                capture_output=True, text=True, env=entorno, timeout=600)
-            archer_activo = "Archer detected OpenMP application with TSan" in r.stderr
+            archer_activo = "Archer detected OpenMP application with TSan" in r.stdout + r.stderr  # Archer usa stdout
             reportes = r.stderr.count("WARNING: ThreadSanitizer")
             reportes_total += reportes
             log.write(f"hilos={hilos} schedule={schedule} archer={'activo' if archer_activo else 'NO cargado'} "
