@@ -1,4 +1,4 @@
-# T13 V6 (estadística del generador, N=10^6 temporadas) y V7 (analítico D=1, N=10^6) | commit 8cd0efad532f | 2026-10-15T19:17:27-05:00 | 12th Gen Intel(R) Core(TM) i5-12400F | g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0 | Python 3.14.4
+# T13 V6 (estadística del generador, N=10^6 temporadas) y V7 (analítico D=1, N=10^6) | commit 5fff53b8b0e5 | 2026-10-15T19:17:27-05:00 | 12th Gen Intel(R) Core(TM) i5-12400F | g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0 | Python 3.14.4
 # comando: PP_V6_N=1000000 python3 -m pytest -v -s tests/unit/test_estadistico.py tests/unit/test_analitico.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.7.0 -- /home/litaht/.venvs/pp-g8/bin/python

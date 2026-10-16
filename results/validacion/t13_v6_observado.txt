@@ -1,4 +1,4 @@
-# T13 V6 frente a lo observado | commit 7812ccfe22f5 | 2026-10-15T20:55:15-05:00
+# T13 V6 frente a lo observado | commit b96f8225354d | 2026-10-15T20:55:15-05:00
 # parametros: data/processed/parametros.csv de T10 corregido (Angela, master 92d6e5e: ene-abr, >= 0,1 mm, Thom, bootstrap de anios; regimenes por ICEN/ENFEN) sha256 a41398d2602879ff...
 # Temporada enero-abril (D=120), dia lluvioso >= 0,1 mm, N_sim=20000 temporadas por grupo, semilla 20261015
 # Datos recibidos de Angela el 15/10/2026 (fuera de Git); este log solo contiene estadisticos agregados

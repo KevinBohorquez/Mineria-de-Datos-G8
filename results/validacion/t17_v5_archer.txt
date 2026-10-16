@@ -1,4 +1,4 @@
-# T17 V5: ThreadSanitizer + Archer (clang + libomp) con 2/4/8/16 hilos | commit 4c1e4746c5ac | 2026-10-15T19:24:17-05:00 | Ubuntu clang version 21.1.8 (6ubuntu1)
+# T17 V5: ThreadSanitizer + Archer (clang + libomp) con 2/4/8/16 hilos | commit 3efd2cbb08eb | 2026-10-15T19:24:17-05:00 | Ubuntu clang version 21.1.8 (6ubuntu1)
 # comando: python3 -m pytest -v -rs tests/concurrency/test_openmp_carreras.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.7.0 -- /home/litaht/.venvs/pp-g8/bin/python
