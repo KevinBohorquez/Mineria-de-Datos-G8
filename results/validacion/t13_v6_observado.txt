@@ -1,6 +1,7 @@
-# T13 V6 frente a lo observado | commit 05c7ef6ffefe | 2026-10-15T20:25:11-05:00 | parametros: data/processed/parametros.csv de T10 (sha256 605c9af9c9377ecd...)
-# Temporada enero-abril (D=120), dia lluvioso >= 0,1 mm (definicion), N_sim=20000 temporadas por grupo, semilla 20261015
-# Datos: data/raw/*.csv y regimenes.csv recibidos de Angela el 15/10/2026 (fuera de Git); este log solo contiene estadisticos agregados
+# T13 V6 frente a lo observado | commit 7812ccfe22f5 | 2026-10-15T20:55:15-05:00
+# parametros: data/processed/parametros.csv de T10 corregido (Angela, master 92d6e5e: ene-abr, >= 0,1 mm, Thom, bootstrap de anios; regimenes por ICEN/ENFEN) sha256 a41398d2602879ff...
+# Temporada enero-abril (D=120), dia lluvioso >= 0,1 mm, N_sim=20000 temporadas por grupo, semilla 20261015
+# Datos recibidos de Angela el 15/10/2026 (fuera de Git); este log solo contiene estadisticos agregados
 # comando: python3 -m pytest -v -s tests/unit/test_estadistico.py -k observado
 ============================= test session starts ==============================
 platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.7.0 -- /home/litaht/.venvs/pp-g8/bin/python
@@ -8,196 +9,196 @@ rootdir: /mnt/d/PROGRAMACIÓN_PARALELA/Programacion-Paralela-G8
 collecting ... collected 24 items / 8 deselected / 16 selected
 
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[lambayeque_lambayeque-el_nino] 
-[V6-obs] lambayeque_lambayeque/el_nino anios=7 dias_lluviosos_obs=98 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.076021, 'p11': 0.398524, 'alfa': 0.087222, 'theta': 19.155382}
+[V6-obs] lambayeque_lambayeque/el_nino anios=21 dias_lluviosos_obs=264 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.075927, 'p11': 0.344697, 'alfa': 0.574198, 'theta': 6.887073}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.1165       0.1118      4.04%
-[V6-obs] media_monto                        3.9806       1.6607     58.28%  <-- >10%
-[V6-obs] desviacion_monto                   8.8187       5.6244     36.22%  <-- >10%
-[V6-obs] p95_monto                         13.5000       9.6519     28.50%  <-- >10%
-[V6-obs] p99_monto                         41.4240      28.3962     31.45%  <-- >10%
-[V6-obs] racha_media                        1.8491       1.6575     10.36%  <-- >10%
-[V6-obs] max_diario_temporada_medio        16.0571      13.5234     15.78%  <-- >10%
-[V6-obs] KS dos muestras: D=0.6688 p=8.561e-43 (n_obs=98, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.1046       0.1035      1.04%
+[V6-obs] media_monto                        3.9545       3.9382      0.41%
+[V6-obs] desviacion_monto                   8.5071       5.2019     38.85%  <-- >10%
+[V6-obs] p95_monto                         13.7250      14.3902      4.85%
+[V6-obs] p99_monto                         43.5830      24.2293     44.41%  <-- >10%
+[V6-obs] racha_media                        1.5260       1.5218      0.28%
+[V6-obs] max_diario_temporada_medio        16.2714      15.0490      7.51%
+[V6-obs] KS dos muestras: D=0.1476 p=3.116e-05 (n_obs=264, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[lambayeque_lambayeque-normal] 
-[V6-obs] lambayeque_lambayeque/normal anios=70 dias_lluviosos_obs=664 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.069593, 'p11': 0.321152, 'alfa': 0.078, 'theta': 11.419456}
+[V6-obs] lambayeque_lambayeque/normal anios=53 dias_lluviosos_obs=480 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.059236, 'p11': 0.280922, 'alfa': 0.73526, 'theta': 2.609903}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.0808       0.0926     14.65%  <-- >10%
-[V6-obs] media_monto                        2.4750       0.8845     64.26%  <-- >10%
-[V6-obs] desviacion_monto                   5.3909       3.1818     40.98%  <-- >10%
-[V6-obs] p95_monto                          9.1805       5.0889     44.57%  <-- >10%
-[V6-obs] p99_monto                         30.5900      16.0378     47.57%  <-- >10%
-[V6-obs] racha_media                        1.3808       1.4687      6.37%
-[V6-obs] max_diario_temporada_medio         9.2086       6.5835     28.51%  <-- >10%
-[V6-obs] KS dos muestras: D=0.7286 p=1.032e-310 (n_obs=664, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.0753       0.0757      0.53%
+[V6-obs] media_monto                        1.9190       1.9087      0.54%
+[V6-obs] desviacion_monto                   3.7619       2.2201     40.98%  <-- >10%
+[V6-obs] p95_monto                          7.1000       6.3651     10.35%  <-- >10%
+[V6-obs] p99_monto                         17.5670      10.1986     41.94%  <-- >10%
+[V6-obs] racha_media                        1.3907       1.3847      0.43%
+[V6-obs] max_diario_temporada_medio         7.0809       5.8529     17.34%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1314 p=4.686e-07 (n_obs=480, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[lima_canete-el_nino] 
-[V6-obs] lima_canete/el_nino anios=6 dias_lluviosos_obs=39 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.271651, 'p11': 0.525773, 'alfa': 0.046787, 'theta': 4.187517}
+[V6-obs] lima_canete/el_nino anios=11 dias_lluviosos_obs=51 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.03254, 'p11': 0.18, 'alfa': 0.82104, 'theta': 1.014972}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.0541       0.3629    570.98%  <-- >10%
-[V6-obs] media_monto                        1.2410       0.1950     84.29%  <-- >10%
-[V6-obs] desviacion_monto                   3.1640       0.8991     71.58%  <-- >10%
-[V6-obs] p95_monto                          4.0000       1.0191     74.52%  <-- >10%
-[V6-obs] p99_monto                         13.6100       4.3499     68.04%  <-- >10%
-[V6-obs] racha_media                        1.2667       2.0934     65.27%  <-- >10%
-[V6-obs] max_diario_temporada_medio         4.6167       4.0935     11.33%  <-- >10%
-[V6-obs] KS dos muestras: D=0.8612 p=2.063e-33 (n_obs=39, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.0386       0.0380      1.56%
+[V6-obs] media_monto                        0.8333       0.8282      0.61%
+[V6-obs] desviacion_monto                   1.1176       0.9139     18.23%  <-- >10%
+[V6-obs] p95_monto                          4.0000       2.6490     33.77%  <-- >10%
+[V6-obs] p99_monto                          4.0000       4.1965      4.91%
+[V6-obs] racha_media                        1.2195       1.2189      0.05%
+[V6-obs] max_diario_temporada_medio         1.5091       1.7943     18.90%  <-- >10%
+[V6-obs] KS dos muestras: D=0.2152 p=0.01567 (n_obs=51, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[lima_canete-normal] 
-[V6-obs] lima_canete/normal anios=28 dias_lluviosos_obs=103 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.108813, 'p11': 0.509111, 'alfa': 0.184889, 'theta': 0.983276}
+[V6-obs] lima_canete/normal anios=27 dias_lluviosos_obs=115 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.031038, 'p11': 0.156522, 'alfa': 0.734788, 'theta': 0.787568}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.0318       0.1805    467.84%  <-- >10%
-[V6-obs] media_monto                        0.4454       0.1815     59.24%  <-- >10%
-[V6-obs] desviacion_monto                   0.6478       0.4219     34.88%  <-- >10%
-[V6-obs] p95_monto                          1.1800       0.9536     19.18%  <-- >10%
-[V6-obs] p99_monto                          3.9820       2.0904     47.50%  <-- >10%
-[V6-obs] racha_media                        1.1839       2.0263     71.15%  <-- >10%
-[V6-obs] max_diario_temporada_medio         0.7411       1.4371     93.91%  <-- >10%
-[V6-obs] KS dos muestras: D=0.6984 p=1.232e-49 (n_obs=103, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.0355       0.0353      0.42%
+[V6-obs] media_monto                        0.5787       0.5744      0.75%
+[V6-obs] desviacion_monto                   1.8874       0.6710     64.45%  <-- >10%
+[V6-obs] p95_monto                          1.4300       1.9158     33.97%  <-- >10%
+[V6-obs] p99_monto                          4.0000       3.0861     22.85%  <-- >10%
+[V6-obs] racha_media                        1.1856       1.1847      0.07%
+[V6-obs] max_diario_temporada_medio         1.3841       1.2356     10.73%  <-- >10%
+[V6-obs] KS dos muestras: D=0.2367 p=5.034e-06 (n_obs=115, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[lima_chosica-el_nino] 
-[V6-obs] lima_chosica/el_nino anios=7 dias_lluviosos_obs=70 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.031295, 'p11': 0.197531, 'alfa': 0.3465, 'theta': 6.762512}
+[V6-obs] lima_chosica/el_nino anios=7 dias_lluviosos_obs=58 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.064267, 'p11': 0.137931, 'alfa': 0.735904, 'theta': 3.80016}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.0971       0.0374     61.50%  <-- >10%
-[V6-obs] media_monto                        2.5500       2.3231      8.90%
-[V6-obs] desviacion_monto                   4.2386       3.9488      6.84%
-[V6-obs] p95_monto                          6.5550      10.1665     55.10%  <-- >10%
-[V6-obs] p99_monto                         20.5570      18.8184      8.46%
-[V6-obs] racha_media                        1.2963       1.2448      3.97%
-[V6-obs] max_diario_temporada_medio         9.9571       6.2596     37.14%  <-- >10%
-[V6-obs] KS dos muestras: D=0.3464 p=6.649e-08 (n_obs=70, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.0688       0.0692      0.52%
+[V6-obs] media_monto                        2.7966       2.7755      0.75%
+[V6-obs] desviacion_monto                   6.2151       3.2292     48.04%  <-- >10%
+[V6-obs] p95_monto                          7.9850       9.2687     16.08%  <-- >10%
+[V6-obs] p99_monto                         33.4090      14.8864     55.44%  <-- >10%
+[V6-obs] racha_media                        1.1600       1.1591      0.08%
+[V6-obs] max_diario_temporada_medio        12.4429       8.2791     33.46%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1843 p=0.03544 (n_obs=58, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[lima_chosica-normal] 
-[V6-obs] lima_chosica/normal anios=18 dias_lluviosos_obs=156 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.027099, 'p11': 0.19, 'alfa': 0.365091, 'theta': 4.961777}
+[V6-obs] lima_chosica/normal anios=16 dias_lluviosos_obs=161 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.074231, 'p11': 0.229814, 'alfa': 1.168574, 'theta': 1.699263}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.0763       0.0322     57.74%  <-- >10%
-[V6-obs] media_monto                        2.0622       1.7885     13.27%  <-- >10%
-[V6-obs] desviacion_monto                   3.3151       2.9627     10.63%  <-- >10%
-[V6-obs] p95_monto                          5.7250       7.6872     34.27%  <-- >10%
-[V6-obs] p99_monto                          8.5550      14.1142     64.98%  <-- >10%
-[V6-obs] racha_media                        1.2381       1.2339      0.34%
-[V6-obs] max_diario_temporada_medio         5.8176       4.3129     25.87%  <-- >10%
-[V6-obs] KS dos muestras: D=0.3321 p=2.307e-15 (n_obs=156, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.0878       0.0876      0.18%
+[V6-obs] media_monto                        1.9857       1.9833      0.12%
+[V6-obs] desviacion_monto                   2.0862       1.8366     11.97%  <-- >10%
+[V6-obs] p95_monto                          5.8000       5.6137      3.21%
+[V6-obs] p99_monto                          7.1600       8.4763     18.38%  <-- >10%
+[V6-obs] racha_media                        1.2984       1.2955      0.22%
+[V6-obs] max_diario_temporada_medio         4.6875       5.4729     16.75%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1106 p=0.04076 (n_obs=161, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[piura_bernal-el_nino] 
-[V6-obs] piura_bernal/el_nino anios=8 dias_lluviosos_obs=134 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.072856, 'p11': 0.42053, 'alfa': 0.108079, 'theta': 46.718315}
+[V6-obs] piura_bernal/el_nino anios=17 dias_lluviosos_obs=234 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.078125, 'p11': 0.397436, 'alfa': 0.471399, 'theta': 17.227313}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.1394       0.1113     20.21%  <-- >10%
-[V6-obs] media_monto                       10.9164       5.0287     53.93%  <-- >10%
-[V6-obs] desviacion_monto                  21.6520      15.3144     29.27%  <-- >10%
-[V6-obs] p95_monto                         63.8700      28.8491     54.83%  <-- >10%
-[V6-obs] p99_monto                         98.9620      77.4069     21.78%  <-- >10%
-[V6-obs] racha_media                        1.8611       1.7198      7.59%
-[V6-obs] max_diario_temporada_medio        30.1125      37.9840     26.14%  <-- >10%
-[V6-obs] KS dos muestras: D=0.5470 p=4.428e-37 (n_obs=134, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.1145       0.1145      0.01%
+[V6-obs] media_monto                        8.1209       8.0972      0.29%
+[V6-obs] desviacion_monto                  17.3802      11.7781     32.23%  <-- >10%
+[V6-obs] p95_monto                         40.8200      31.7422     22.24%  <-- >10%
+[V6-obs] p99_monto                         78.9420      55.2769     29.98%  <-- >10%
+[V6-obs] racha_media                        1.6596       1.6552      0.26%
+[V6-obs] max_diario_temporada_medio        23.8353      34.8067     46.03%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1593 p=2.015e-05 (n_obs=234, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[piura_bernal-normal] 
-[V6-obs] piura_bernal/normal anios=40 dias_lluviosos_obs=351 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.053097, 'p11': 0.298, 'alfa': 0.113294, 'theta': 10.324513}
+[V6-obs] piura_bernal/normal anios=28 dias_lluviosos_obs=232 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.05214, 'p11': 0.301724, 'alfa': 0.640299, 'theta': 3.868745}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.0758       0.0700      7.66%
-[V6-obs] media_monto                        2.9704       1.1574     61.03%  <-- >10%
-[V6-obs] desviacion_monto                   5.3892       3.4579     35.84%  <-- >10%
-[V6-obs] p95_monto                         12.0000       6.5704     45.25%  <-- >10%
-[V6-obs] p99_monto                         26.5000      17.3732     34.44%  <-- >10%
-[V6-obs] racha_media                        1.4303       1.4192      0.78%
-[V6-obs] max_diario_temporada_medio         9.9282       6.3988     35.55%  <-- >10%
-[V6-obs] KS dos muestras: D=0.6228 p=2.331e-122 (n_obs=351, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.0689       0.0692      0.44%
+[V6-obs] media_monto                        2.4772       2.4671      0.41%
+[V6-obs] desviacion_monto                   4.2819       3.0771     28.14%  <-- >10%
+[V6-obs] p95_monto                         10.0450       8.6515     13.87%  <-- >10%
+[V6-obs] p99_monto                         15.6590      14.2017      9.31%
+[V6-obs] racha_media                        1.4321       1.4271      0.35%
+[V6-obs] max_diario_temporada_medio         7.5786       7.6224      0.58%
+[V6-obs] KS dos muestras: D=0.1415 p=0.0002452 (n_obs=232, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[piura_chulucanas-el_nino] 
-[V6-obs] piura_chulucanas/el_nino anios=5 dias_lluviosos_obs=204 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.083088, 'p11': 0.597865, 'alfa': 0.175735, 'theta': 31.104888}
+[V6-obs] piura_chulucanas/el_nino anios=10 dias_lluviosos_obs=568 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.272293, 'p11': 0.699115, 'alfa': 0.467086, 'theta': 29.659458}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.3394       0.1699     49.96%  <-- >10%
-[V6-obs] media_monto                        7.2539       5.4522     24.84%  <-- >10%
-[V6-obs] desviacion_monto                  14.8907      12.9873     12.78%  <-- >10%
-[V6-obs] p95_monto                         33.2350      28.9705     12.83%  <-- >10%
-[V6-obs] p99_monto                         77.6610      64.6456     16.76%  <-- >10%
-[V6-obs] racha_media                        2.9143       2.4608     15.56%  <-- >10%
-[V6-obs] max_diario_temporada_medio        50.4000      42.6642     15.35%  <-- >10%
-[V6-obs] KS dos muestras: D=0.3922 p=1.221e-27 (n_obs=204, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.4722       0.4716      0.12%
+[V6-obs] media_monto                       13.8535      13.8507      0.02%
+[V6-obs] desviacion_monto                  25.2955      20.2299     20.03%  <-- >10%
+[V6-obs] p95_monto                         56.4200      54.3831      3.61%
+[V6-obs] p99_monto                        135.8250      94.9630     30.08%  <-- >10%
+[V6-obs] racha_media                        3.2471       3.2602      0.40%
+[V6-obs] max_diario_temporada_medio        98.2200      95.7892      2.47%
+[V6-obs] KS dos muestras: D=0.1404 p=3.137e-09 (n_obs=568, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[piura_chulucanas-normal] 
-[V6-obs] piura_chulucanas/normal anios=27 dias_lluviosos_obs=1118 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.081538, 'p11': 0.567077, 'alfa': 0.177266, 'theta': 43.772772}
+[V6-obs] piura_chulucanas/normal anios=21 dias_lluviosos_obs=701 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.156076, 'p11': 0.597997, 'alfa': 0.491948, 'theta': 11.075068}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.3511       0.1573     55.20%  <-- >10%
-[V6-obs] media_monto                        9.5332       7.7289     18.93%  <-- >10%
-[V6-obs] desviacion_monto                  19.9683      18.3382      8.16%
-[V6-obs] p95_monto                         43.1450      40.9739      5.03%
-[V6-obs] p99_monto                        107.6210      91.3426     15.13%  <-- >10%
-[V6-obs] racha_media                        2.7919       2.2879     18.05%  <-- >10%
-[V6-obs] max_diario_temporada_medio        63.1667      58.0638      8.08%
-[V6-obs] KS dos muestras: D=0.3658 p=1.394e-109 (n_obs=1118, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.2786       0.2777      0.32%
+[V6-obs] media_monto                        5.4484       5.4491      0.01%
+[V6-obs] desviacion_monto                  11.3490       7.7526     31.69%  <-- >10%
+[V6-obs] p95_monto                         25.6000      20.9990     17.97%  <-- >10%
+[V6-obs] p99_monto                         61.3000      36.2506     40.86%  <-- >10%
+[V6-obs] racha_media                        2.4840       2.4603      0.95%
+[V6-obs] max_diario_temporada_medio        40.2524      31.4705     21.82%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1482 p=2.959e-12 (n_obs=701, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[piura_miraflores-el_nino] 
-[V6-obs] piura_miraflores/el_nino anios=8 dias_lluviosos_obs=125 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.043853, 'p11': 0.380952, 'alfa': 0.331072, 'theta': 26.271412}
+[V6-obs] piura_miraflores/el_nino anios=13 dias_lluviosos_obs=273 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.105634, 'p11': 0.507353, 'alfa': 0.63559, 'theta': 18.715851}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.1301       0.0659     49.35%  <-- >10%
-[V6-obs] media_monto                       12.7776       8.6852     32.03%  <-- >10%
-[V6-obs] desviacion_monto                  17.1860      15.0771     12.27%  <-- >10%
-[V6-obs] p95_monto                         49.9600      38.4261     23.09%  <-- >10%
-[V6-obs] p99_monto                         68.6080      71.6496      4.43%
-[V6-obs] racha_media                        1.9531       1.6095     17.59%  <-- >10%
-[V6-obs] max_diario_temporada_medio        29.0750      32.5783     12.05%  <-- >10%
-[V6-obs] KS dos muestras: D=0.2704 p=2.329e-08 (n_obs=125, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.1747       0.1757      0.59%
+[V6-obs] media_monto                       11.8956      11.8925      0.03%
+[V6-obs] desviacion_monto                  17.2450      14.8815     13.71%  <-- >10%
+[V6-obs] p95_monto                         50.2200      41.8122     16.74%  <-- >10%
+[V6-obs] p99_monto                         77.1200      68.9728     10.56%  <-- >10%
+[V6-obs] racha_media                        2.0299       2.0200      0.48%
+[V6-obs] max_diario_temporada_medio        36.2308      52.3004     44.35%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1218 p=0.0008284 (n_obs=273, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[piura_miraflores-normal] 
-[V6-obs] piura_miraflores/normal anios=32 dias_lluviosos_obs=356 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.055717, 'p11': 0.374078, 'alfa': 0.113143, 'theta': 29.326808}
+[V6-obs] piura_miraflores/normal anios=27 dias_lluviosos_obs=221 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.051839, 'p11': 0.298643, 'alfa': 0.746797, 'theta': 5.545252}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.0933       0.0814     12.70%  <-- >10%
-[V6-obs] media_monto                        7.0256       3.2958     53.09%  <-- >10%
-[V6-obs] desviacion_monto                  13.1989       9.8223     25.58%  <-- >10%
-[V6-obs] p95_monto                         28.5500      18.7541     34.31%  <-- >10%
-[V6-obs] p99_monto                         75.4500      49.4431     34.47%  <-- >10%
-[V6-obs] racha_media                        1.6389       1.5929      2.81%
-[V6-obs] max_diario_temporada_medio        16.9844      20.0666     18.15%  <-- >10%
-[V6-obs] KS dos muestras: D=0.6043 p=6.053e-116 (n_obs=356, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.0682       0.0685      0.43%
+[V6-obs] media_monto                        4.1412       4.1284      0.31%
+[V6-obs] desviacion_monto                   7.9335       4.7677     39.90%  <-- >10%
+[V6-obs] p95_monto                         13.5000      13.6841      1.36%
+[V6-obs] p99_monto                         39.6200      21.8982     44.73%  <-- >10%
+[V6-obs] racha_media                        1.4258       1.4203      0.39%
+[V6-obs] max_diario_temporada_medio        11.9370      12.0420      0.88%
+[V6-obs] KS dos muestras: D=0.1625 p=2.357e-05 (n_obs=221, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_eltigre-el_nino] 
-[V6-obs] tumbes_eltigre/el_nino anios=7 dias_lluviosos_obs=420 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.134026, 'p11': 0.592063, 'alfa': 0.223428, 'theta': 38.054289}
+[V6-obs] tumbes_eltigre/el_nino anios=18 dias_lluviosos_obs=1004 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.308631, 'p11': 0.644935, 'alfa': 0.584895, 'theta': 17.392042}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.4994       0.2456     50.83%  <-- >10%
-[V6-obs] media_monto                       11.0024       8.5061     22.69%  <-- >10%
-[V6-obs] desviacion_monto                  20.1678      17.9562     10.97%  <-- >10%
-[V6-obs] p95_monto                         49.3350      42.5156     13.82%  <-- >10%
-[V6-obs] p99_monto                         85.7020      87.8487      2.50%
-[V6-obs] racha_media                        3.3171       2.4256     26.87%  <-- >10%
-[V6-obs] max_diario_temporada_medio        85.2857      70.3862     17.47%  <-- >10%
-[V6-obs] KS dos muestras: D=0.2870 p=1.037e-28 (n_obs=420, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.4642       0.4627      0.31%
+[V6-obs] media_monto                       10.1725      10.1636      0.09%
+[V6-obs] desviacion_monto                  17.1006      13.2635     22.44%  <-- >10%
+[V6-obs] p95_monto                         44.3400      36.8159     16.97%  <-- >10%
+[V6-obs] p99_monto                         80.0850      61.7137     22.94%  <-- >10%
+[V6-obs] racha_media                        2.7514       2.7758      0.89%
+[V6-obs] max_diario_temporada_medio        74.1222      61.8344     16.58%  <-- >10%
+[V6-obs] KS dos muestras: D=0.0850 p=1.038e-05 (n_obs=1004, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_eltigre-normal] 
-[V6-obs] tumbes_eltigre/normal anios=40 dias_lluviosos_obs=1631 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.101375, 'p11': 0.49517, 'alfa': 0.28098, 'theta': 21.598555}
+[V6-obs] tumbes_eltigre/normal anios=29 dias_lluviosos_obs=1085 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.194444, 'p11': 0.574331, 'alfa': 0.55639, 'theta': 12.056491}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.3501       0.1664     52.46%  <-- >10%
-[V6-obs] media_monto                        7.7797       6.0568     22.15%  <-- >10%
-[V6-obs] desviacion_monto                  12.7646      11.4031     10.67%  <-- >10%
-[V6-obs] p95_monto                         32.7500      28.2726     13.67%  <-- >10%
-[V6-obs] p99_monto                         63.8800      55.0461     13.83%  <-- >10%
-[V6-obs] racha_media                        2.3923       1.9713     17.60%  <-- >10%
-[V6-obs] max_diario_temporada_medio        49.0205      38.1869     22.10%  <-- >10%
-[V6-obs] KS dos muestras: D=0.2626 p=4.172e-75 (n_obs=1631, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.3111       0.3119      0.27%
+[V6-obs] media_monto                        6.7081       6.7092      0.02%
+[V6-obs] desviacion_monto                  11.4432       8.9670     21.64%  <-- >10%
+[V6-obs] p95_monto                         30.0000      24.7169     17.61%  <-- >10%
+[V6-obs] p99_monto                         53.1640      41.7692     21.43%  <-- >10%
+[V6-obs] racha_media                        2.3471       2.3245      0.96%
+[V6-obs] max_diario_temporada_medio        41.8310      37.5660     10.20%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1164 p=5.456e-11 (n_obs=1085, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_puertopizarro-el_nino] 
-[V6-obs] tumbes_puertopizarro/el_nino anios=9 dias_lluviosos_obs=280 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.08814, 'p11': 0.38806, 'alfa': 0.306537, 'theta': 44.431542}
+[V6-obs] tumbes_puertopizarro/el_nino anios=17 dias_lluviosos_obs=547 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.222297, 'p11': 0.392661, 'alfa': 0.688265, 'theta': 22.558363}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.2664       0.1256     52.84%  <-- >10%
-[V6-obs] media_monto                       15.3804      13.5486     11.91%  <-- >10%
-[V6-obs] desviacion_monto                  25.3996      24.4487      3.74%
-[V6-obs] p95_monto                         73.8250      61.4545     16.76%  <-- >10%
-[V6-obs] p99_monto                        125.4130     117.5538      6.27%
-[V6-obs] racha_media                        1.7821       1.6314      8.45%
-[V6-obs] max_diario_temporada_medio        72.1778      72.8195      0.89%
-[V6-obs] KS dos muestras: D=0.2102 p=9.409e-11 (n_obs=280, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.2677       0.2672      0.20%
+[V6-obs] media_monto                       15.5261      15.5109      0.10%
+[V6-obs] desviacion_monto                  23.7792      18.6511     21.57%  <-- >10%
+[V6-obs] p95_monto                         66.2100      53.0011     19.95%  <-- >10%
+[V6-obs] p99_monto                        117.7220      85.9368     27.00%  <-- >10%
+[V6-obs] racha_media                        1.6465       1.6389      0.47%
+[V6-obs] max_diario_temporada_medio        64.4765      74.8610     16.11%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1350 p=2.702e-08 (n_obs=547, n_sim=5000)
 FAILED
 tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_puertopizarro-normal] 
-[V6-obs] tumbes_puertopizarro/normal anios=41 dias_lluviosos_obs=1002 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.06788, 'p11': 0.348584, 'alfa': 0.277665, 'theta': 29.395424}
+[V6-obs] tumbes_puertopizarro/normal anios=30 dias_lluviosos_obs=697 umbral=0.1 mm N_sim=20000x120 d params={'p01': 0.14236, 'p11': 0.415584, 'alfa': 0.735523, 'theta': 9.373866}
 [V6-obs] estadistico                     observado     simulado  error_rel
-[V6-obs] frecuencia_lluvia                  0.2114       0.0939     55.57%  <-- >10%
-[V6-obs] media_monto                        9.3840       8.1124     13.55%  <-- >10%
-[V6-obs] desviacion_monto                  15.8250      15.4407      2.43%
-[V6-obs] p95_monto                         36.6650      38.0402      3.75%
-[V6-obs] p99_monto                         75.1980      74.5541      0.86%
-[V6-obs] racha_media                        1.6756       1.5294      8.73%
-[V6-obs] max_diario_temporada_medio        43.6775      39.5776      9.39%
-[V6-obs] KS dos muestras: D=0.3112 p=4.084e-72 (n_obs=1002, n_sim=5000)
+[V6-obs] frecuencia_lluvia                  0.1937       0.1951      0.72%
+[V6-obs] media_monto                        6.8947       6.8937      0.01%
+[V6-obs] desviacion_monto                  11.8660       8.0229     32.39%  <-- >10%
+[V6-obs] p95_monto                         27.0200      22.9833     14.94%  <-- >10%
+[V6-obs] p99_monto                         64.2320      36.9204     42.52%  <-- >10%
+[V6-obs] racha_media                        1.7086       1.7049      0.22%
+[V6-obs] max_diario_temporada_medio        39.4000      29.4294     25.31%  <-- >10%
+[V6-obs] KS dos muestras: D=0.1151 p=1.597e-07 (n_obs=697, n_sim=5000)
 FAILED
 
 =========================== short test summary info ============================
@@ -217,4 +218,4 @@ FAILED tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_eltigre
 FAILED tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_eltigre-normal]
 FAILED tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_puertopizarro-el_nino]
 FAILED tests/unit/test_estadistico.py::test_v6_frente_a_observado[tumbes_puertopizarro-normal]
-======================= 16 failed, 8 deselected in 2.18s =======================
+======================= 16 failed, 8 deselected in 2.53s =======================
