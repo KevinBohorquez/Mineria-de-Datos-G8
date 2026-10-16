@@ -5,17 +5,27 @@
 # diario por temporada. Aceptación: error relativo <= 10 % en cada estadístico y Kolmogorov–Smirnov
 # no rechazado al 5 % para los montos.
 #
-# Mientras no existan los datos observados de T08/T10, la referencia es el valor EXACTO que implica el
-# modelo Markov + gamma con los mismos parámetros (calculado aquí, no copiado de una corrida).
+# Dos partes:
+#   1. Frente al modelo: la referencia es el valor EXACTO que implica Markov + gamma con los mismos
+#      parámetros. Verifica el código del generador; corre en CTest y en el CI.
+#   2. Frente a lo observado (test_v6_frente_a_observado): series SENAMHI y parametros.csv de T06–T10,
+#      que no están en Git. Se compara en la temporada de la definición (enero–abril, D = 120) con día
+#      lluvioso >= 0,1 mm. Se omite si faltan los datos y no forma parte de CTest.
 #
 # Uso (tras compilar):  python3 -m pytest -v -s tests/unit/test_estadistico.py
 # Variables opcionales: PP_V6_GENERADOR=<ruta a pp_v6_generador> (por defecto build/pp_v6_generador)
 #                       PP_V6_N=<temporadas>  (por defecto 20000; la definición usa 10^8 para la corrida oficial)
+#                       PP_V6_PARAMETROS, PP_V6_UMBRAL_LLUVIA, PP_V6_N_OBS (parte 2; ver más abajo)
+import csv
+import datetime
 import math
 import os
+import statistics
 import subprocess
+from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
 import pytest
 from scipy import integrate, stats
 
@@ -75,8 +85,8 @@ def esperados(p01, p11, alfa, theta, dias):
     }
 
 
-def correr_generador(params):
-    cmd = [str(GENERADOR), "--n", str(N), "--semilla", str(SEMILLA)]
+def correr_generador(params, n=N):
+    cmd = [str(GENERADOR), "--n", str(n), "--semilla", str(SEMILLA)]
     for clave, valor in params.items():
         cmd += [f"--{clave}", str(valor)]
     r = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=1800)
@@ -126,3 +136,89 @@ def test_v6_control_negativo_detecta_parametros_equivocados():
     assert abs(float(obs["media_monto"]) - esp["media_monto"]) / esp["media_monto"] > TOLERANCIA
     muestra = [float(x) for x in obs["muestra"].split(";")]
     assert stats.kstest(muestra, "gamma", args=(params["alfa"], 0.0, params["theta"] * 1.3)).pvalue < ALFA_KS
+
+
+# ---------- V6 frente a lo OBSERVADO (series SENAMHI de T06–T10, fuera de Git) ----------
+# Se omite si faltan data/raw/*.csv o data/processed/{parametros,regimenes}.csv (p. ej. en el CI).
+DATOS_RAW = RAIZ / "data" / "raw"
+PARAMETROS = Path(os.environ.get("PP_V6_PARAMETROS", RAIZ / "data" / "processed" / "parametros.csv"))
+REGIMENES = RAIZ / "data" / "processed" / "regimenes.csv"
+# Umbral de día lluvioso en la serie OBSERVADA; debe ser el mismo con el que se calibró parametros.csv.
+# En lo simulado todo día lluvioso del modelo cuenta, porque la gamma se ajustó a esos días.
+# Definición §7.6: >= 0,1 mm. calibrar.py (T10, 15/10/2026) usa > 0, que aquí se indica con 0.
+UMBRAL_LLUVIA = float(os.environ.get("PP_V6_UMBRAL_LLUVIA", "0.1"))
+N_OBS = int(os.environ.get("PP_V6_N_OBS", "20000"))  # temporadas simuladas por grupo
+# Definición §6: D = 120 días, temporada enero–abril (costa norte). Se comparan solo esos meses.
+MESES_TEMPORADA = range(1, 5)
+DIAS_TEMPORADA_OBS = 120
+
+
+def grupos_calibrados():
+    if not (PARAMETROS.exists() and REGIMENES.exists() and any(DATOS_RAW.glob("*.csv"))):
+        return [pytest.param(None, None, None, marks=pytest.mark.skip(reason="faltan los datos SENAMHI de T06–T10"))]
+    with PARAMETROS.open(newline="", encoding="utf-8") as f:
+        return [pytest.param(fila["estacion"], fila["regimen"],
+                             {k: float(fila[k]) for k in ("p01", "p11", "alfa", "theta")},
+                             id=f"{fila['estacion']}-{fila['regimen']}")
+                for fila in csv.DictReader(f)]
+
+
+def estadisticos_observados(estacion, regimen, umbral):
+    """Enero–abril de los años de regimenes.csv con ese régimen. Un día faltante o un salto de fechas
+    corta la racha abierta sin contarla, igual que el auxiliar solo cuenta rachas cerradas."""
+    with REGIMENES.open(newline="", encoding="utf-8") as f:
+        anios = {int(r["anio"]) for r in csv.DictReader(f) if r["estacion"] == estacion and r["regimen"] == regimen}
+    dias = rachas = dias_en_rachas = racha = 0
+    montos, max_anio, previa = [], defaultdict(float), None
+    with (DATOS_RAW / f"{estacion}.csv").open(newline="", encoding="utf-8") as f:
+        for fila in csv.DictReader(f):
+            fecha = datetime.date.fromisoformat(fila["fecha"])
+            if fecha.year not in anios or fecha.month not in MESES_TEMPORADA:
+                previa, racha = None, 0
+                continue
+            if previa is None or (fecha - previa).days != 1:
+                racha = 0
+            previa = fecha
+            texto = fila["precipitacion_mm"]
+            if texto == "" or float(texto) < 0:
+                racha = 0
+                continue
+            v = float(texto)
+            dias += 1
+            max_anio[fecha.year] = max(max_anio[fecha.year], v)
+            if (v >= umbral) if umbral > 0 else (v > 0):
+                montos.append(v)
+                racha += 1
+            elif racha:
+                rachas, dias_en_rachas, racha = rachas + 1, dias_en_rachas + racha, 0
+    return {
+        "frecuencia_lluvia": len(montos) / dias,
+        "media_monto": statistics.mean(montos),
+        "desviacion_monto": statistics.stdev(montos),
+        "p95_monto": float(np.percentile(montos, 95)),
+        "p99_monto": float(np.percentile(montos, 99)),
+        "racha_media": dias_en_rachas / rachas,
+        "max_diario_temporada_medio": statistics.mean(max_anio.values()),
+    }, montos, len(anios)
+
+
+@pytest.mark.parametrize("estacion,regimen,params", grupos_calibrados())
+def test_v6_frente_a_observado(estacion, regimen, params):
+    esp, montos_obs, n_anios = estadisticos_observados(estacion, regimen, UMBRAL_LLUVIA)
+    sim = correr_generador(dict(params, dias=DIAS_TEMPORADA_OBS), n=N_OBS)
+    muestra = [float(x) for x in sim["muestra"].split(";") if x]
+    ks = stats.ks_2samp(montos_obs, muestra)
+    print(f"\n[V6-obs] {estacion}/{regimen} anios={n_anios} dias_lluviosos_obs={len(montos_obs)} "
+          f"umbral={UMBRAL_LLUVIA} mm N_sim={N_OBS}x{DIAS_TEMPORADA_OBS} d params={params}")
+    print(f"[V6-obs] {'estadistico':28s} {'observado':>12s} {'simulado':>12s} {'error_rel':>10s}")
+    fallos = []
+    for clave, valor_obs in esp.items():
+        valor_sim = float(sim[clave])
+        error = abs(valor_sim - valor_obs) / abs(valor_obs)
+        print(f"[V6-obs] {clave:28s} {valor_obs:12.4f} {valor_sim:12.4f} {error:10.2%}{'  <-- >10%' if error > TOLERANCIA else ''}")
+        if error > TOLERANCIA:
+            fallos.append(f"{clave} {error:.0%}")
+    print(f"[V6-obs] KS dos muestras: D={ks.statistic:.4f} p={ks.pvalue:.4g} (n_obs={len(montos_obs)}, n_sim={len(muestra)})")
+    if ks.pvalue < ALFA_KS:
+        fallos.append(f"KS p={ks.pvalue:.2g}")
+    assert not fallos, f"{estacion}/{regimen}: " + "; ".join(fallos)
